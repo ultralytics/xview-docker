@@ -3,7 +3,7 @@
 # WARNING: Run 'chmod +x run.sh' BEFORE BUILDING DOCKER CONTAINER
 
 # example:
-# bash run.sh /1047.tif /tmp
+# bash run.sh ./1047.tif ./tmp
 
 # GCP:
 # rm -rf xview && git clone https://github.com/ultralytics/xview && cp drive/fresh9_5_e201.pt xview/checkpoint.pt
