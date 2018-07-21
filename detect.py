@@ -21,7 +21,7 @@ parser.add_argument('-config_path', type=str, default='cfg/yolovx_YL0.cfg', help
 parser.add_argument('-weights_path', type=str, default='./checkpoint.pt', help='weights path')
 parser.add_argument('-class_path', type=str, default='./xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
-parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
+parser.add_argument('-nms_thres', type=float, default=0.6, help='iou threshold for non-maximum suppression')
 parser.add_argument('-batch_size', type=int, default=1, help='size of the batches')
 parser.add_argument('-img_size', type=int, default=32 * 19, help='size of each image dimension')
 parser.add_argument('-plot_flag', type=bool, default=False, help='plots predicted images if True')
