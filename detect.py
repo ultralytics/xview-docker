@@ -21,7 +21,7 @@ parser.add_argument('-config_path', type=str, default='cfg/yolovx_YL0.cfg', help
 parser.add_argument('-weights_path', type=str, default='./checkpoint.pt', help='weights path')
 parser.add_argument('-class_path', type=str, default='./xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
-parser.add_argument('-nms_thres', type=float, default=0.3, help='iou threshold for non-maximum suppression')
+parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
 parser.add_argument('-batch_size', type=int, default=1, help='size of the batches')
 parser.add_argument('-img_size', type=int, default=32 * 19, help='size of each image dimension')
 parser.add_argument('-plot_flag', type=bool, default=False, help='plots predicted images if True')
@@ -91,12 +91,12 @@ def detect(opt):
         ni = int(math.ceil(img.shape[1] / 608))  # up-down
         nj = int(math.ceil(img.shape[2] / 608))  # left-right
 
-        for i in range(ni):  # single scan
-            # for i in range(ni - 1):
+         #for i in range(ni):  # single scan
+        for i in range(ni - 1):
             print('row %g/%g: ' % (i, ni), end='')
 
-            for j in range(nj):  # single scan
-                # for j in range(nj if i==0 else nj - 1):
+            # for j in range(nj):  # single scan
+            for j in range(nj if i==0 else nj - 1):
                 print('%g ' % j, end='', flush=True)
 
                 # forward scan
@@ -112,52 +112,51 @@ def detect(opt):
                     pred = model(chip)
                     pred = pred[pred[:, :, 4] > opt.conf_thres]
 
-                    # if (j > 0) & (len(pred) > 0):
-                    #     pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 4)]  # near left border
-                    # if (j < nj) & (len(pred) > 0):
-                    #     pred = pred[(pred[:, 0] + pred[:, 2] / 2 < 604)]  # near right border
-                    # if (i > 0) & (len(pred) > 0):
-                    #     pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 4)]  # near top border
-                    # if (i < ni) & (len(pred) > 0):
-                    #     pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 604)]  # near bottom border
+                    if (j > 0) & (len(pred) > 0):
+                        pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 4)]  # near left border
+                    if (j < nj) & (len(pred) > 0):
+                        pred = pred[(pred[:, 0] + pred[:, 2] / 2 < 604)]  # near right border
+                    if (i > 0) & (len(pred) > 0):
+                        pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 4)]  # near top border
+                    if (i < ni) & (len(pred) > 0):
+                        pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 604)]  # near bottom border
 
                     if len(pred) > 0:
                         pred[:, 0] += x1
                         pred[:, 1] += y1
                         preds.append(pred.unsqueeze(0))
 
-                # # backward scan
-                # y2 = max(img.shape[1] - i * 608, 608)
-                # y1 = y2 - 608
-                # x2 = max(img.shape[2] - j * 608, 608)
-                # x1 = x2 - 608
-                # chip = img[:, y1:y2, x1:x2]
-                #
-                # # plot
-                # #import matplotlib.pyplot as plt
-                # #plt.subplot(ni, nj, i * nj + j + 1).imshow(chip[1])
-                # # plt.plot(labels[:, [1, 3, 3, 1, 1]].T, labels[:, [2, 2, 4, 4, 2]].T, '.-')
-                #
-                #
-                # # Get detections
-                # chip = torch.from_numpy(chip).unsqueeze(0).to(device)
-                # with torch.no_grad():
-                #     pred = model(chip)
-                #     pred = pred[pred[:, :, 4] > opt.conf_thres]
-                #
-                #     if (j < nj) & (len(pred) > 0):
-                #         pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 4)]  # near left border
-                #     if (j > 0) & (len(pred) > 0):
-                #         pred = pred[(pred[:, 0] + pred[:, 2] / 2 < 604)]  # near right border
-                #     if (i < ni) & (len(pred) > 0):
-                #         pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 4)]  # near top border
-                #     if (i > 0) & (len(pred) > 0):
-                #         pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 604)]  # near bottom border
-                #
-                #     if len(pred) > 0:
-                #         pred[:, 0] += x1
-                #         pred[:, 1] += y1
-                #         preds.append(pred.unsqueeze(0))
+                # backward scan
+                y2 = max(img.shape[1] - i * 608, 608)
+                y1 = y2 - 608
+                x2 = max(img.shape[2] - j * 608, 608)
+                x1 = x2 - 608
+                chip = img[:, y1:y2, x1:x2]
+
+                # plot
+                #import matplotlib.pyplot as plt
+                #plt.subplot(ni, nj, i * nj + j + 1).imshow(chip[1])
+                # plt.plot(labels[:, [1, 3, 3, 1, 1]].T, labels[:, [2, 2, 4, 4, 2]].T, '.-')
+
+                # Get detections
+                chip = torch.from_numpy(chip).unsqueeze(0).to(device)
+                with torch.no_grad():
+                    pred = model(chip)
+                    pred = pred[pred[:, :, 4] > opt.conf_thres]
+
+                    if (j < nj) & (len(pred) > 0):
+                        pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 4)]  # near left border
+                    if (j > 0) & (len(pred) > 0):
+                        pred = pred[(pred[:, 0] + pred[:, 2] / 2 < 604)]  # near right border
+                    if (i < ni) & (len(pred) > 0):
+                        pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 4)]  # near top border
+                    if (i > 0) & (len(pred) > 0):
+                        pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 604)]  # near bottom border
+
+                    if len(pred) > 0:
+                        pred[:, 0] += x1
+                        pred[:, 1] += y1
+                        preds.append(pred.unsqueeze(0))
 
         if len(preds) > 0:
             detections = non_max_suppression(torch.cat(preds, 1), opt.conf_thres, opt.nms_thres, mat_priors, img, [])
