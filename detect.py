@@ -38,7 +38,7 @@ def detect(opt):
     # load model 1
     model = Darknet(opt.config_path, opt.img_size, targets=targets_path)
     current = model.state_dict()
-    saved = torch.load('./checkpoint.pt')
+    saved = torch.load('./checkpoint.pt', map_location='cuda:0' if cuda else 'cpu')
     # 1. filter out unnecessary keys
     saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
     # 2. overwrite entries in the existing state dict
@@ -51,7 +51,7 @@ def detect(opt):
     # load model 2
     model2 = Darknet(opt.config_path, opt.img_size, targets=targets_path)
     current = model2.state_dict()
-    saved = torch.load('./checkpoint.pt')
+    saved = torch.load('./checkpoint.pt', map_location='cuda:0' if cuda else 'cpu')
     # 1. filter out unnecessary keys
     saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
     # 2. overwrite entries in the existing state dict
