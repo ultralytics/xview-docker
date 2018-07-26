@@ -21,6 +21,7 @@ results.txt
 metrics.txt
 printedResults.txt
 temp-plot.html
+run.sh
 
 
 # MATLAB GitIgnore -----------------------------------------------------------------------------------------------------
