@@ -28,12 +28,12 @@ class ImageFolder():  # for eval-only
         assert self.nF > 0, 'No images found in path %s' % path
 
         # RGB normalization values
-        self.rgb_mean = np.array([60.134, 49.697, 40.746], dtype=np.float32).reshape((3, 1, 1))
-        self.rgb_std = np.array([29.99, 24.498, 22.046], dtype=np.float32).reshape((3, 1, 1))
+        # self.rgb_mean = np.array([60.134, 49.697, 40.746], dtype=np.float32).reshape((3, 1, 1))
+        # self.rgb_std = np.array([29.99, 24.498, 22.046], dtype=np.float32).reshape((3, 1, 1))
 
         # RGB normalization of YUV-equalized images clipped at 5
-        # self.rgb_mean = np.array([100.931, 90.863, 82.412], dtype=np.float32).reshape((3, 1, 1))
-        # self.rgb_std = np.array([52.022, 47.313, 44.845], dtype=np.float32).reshape((3, 1, 1))
+        self.rgb_mean = np.array([100.931, 90.863, 82.412], dtype=np.float32).reshape((3, 1, 1))
+        self.rgb_std = np.array([52.022, 47.313, 44.845], dtype=np.float32).reshape((3, 1, 1))
         self.clahe = cv2.createCLAHE(tileGridSize=(32, 32), clipLimit=5)
 
     def __iter__(self):
@@ -50,12 +50,12 @@ class ImageFolder():  # for eval-only
         # Add padding
         img = cv2.imread(img_path)  # BGR
 
-        # # Y channel histogram equalization
-        # img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
-        # # equalize the histogram of the Y channel
-        # img_yuv[:, :, 0] = self.clahe.apply(img_yuv[:, :, 0])
-        # # convert the YUV image back to RGB format
-        # img = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+        # Y channel histogram equalization
+        img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+        # equalize the histogram of the Y channel
+        img_yuv[:, :, 0] = self.clahe.apply(img_yuv[:, :, 0])
+        # convert the YUV image back to RGB format
+        img = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
 
         # Normalize RGB
         img = img[:, :, ::-1].transpose(2, 0, 1)
