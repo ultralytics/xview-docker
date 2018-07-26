@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 if platform == 'darwin':  # macos
     parser.add_argument('-image_folder', type=str, default='./1047.tif', help='path to images')
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
-    cuda = False # torch.cuda.is_available()
+    cuda = torch.cuda.is_available()
 else:  # gcp
     parser.add_argument('-image_folder', type=str, default='../train_images3/', help='path to images')
     parser.add_argument('-output_folder', type=str, default='../predictions', help='path to outputs')
@@ -23,7 +23,7 @@ parser.add_argument('-class_path', type=str, default='./xview.names', help='path
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
 parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
 parser.add_argument('-batch_size', type=int, default=1, help='size of the batches')
-parser.add_argument('-img_size', type=int, default=32 * 19, help='size of each image dimension')
+parser.add_argument('-img_size', type=int, default=32 * 25, help='size of each image dimension')
 parser.add_argument('-plot_flag', type=bool, default=False, help='plots predicted images if True')
 opt = parser.parse_args()
 print(opt)
@@ -31,9 +31,7 @@ print(opt)
 # @profile
 def detect(opt):
     os.system('rm -rf ' + opt.output_folder)
-    #os.system('rm -rf ' + opt.output_folder + '_img')
     os.makedirs(opt.output_folder, exist_ok=True)
-    # os.makedirs(opt.output_folder + '_img', exist_ok=True)
     device = torch.device('cuda:0' if cuda else 'cpu')
 
     # load model 1
