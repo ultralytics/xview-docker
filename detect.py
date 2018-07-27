@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 if platform == 'darwin':  # macos
     parser.add_argument('-image_folder', type=str, default='./1047.tif', help='path to images')
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
-    cuda = torch.cuda.is_available()
+    cuda = False #torch.cuda.is_available()
 else:  # gcp
     parser.add_argument('-image_folder', type=str, default='../train_images3/', help='path to images')
     parser.add_argument('-output_folder', type=str, default='../predictions', help='path to outputs')
@@ -154,7 +154,7 @@ def detect(opt):
     # Bounding-box colors
     color_list = [[random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)] for _ in range(len(classes))]
 
-    if len(img_detections) == 0:
+    if (len(img_detections) == 0) | (img_detections[0] is None):
         return
 
     # Iterate through images and save plot of detections
