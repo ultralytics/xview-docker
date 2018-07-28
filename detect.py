@@ -14,8 +14,8 @@ if platform == 'darwin':  # macos
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
     cuda = torch.cuda.is_available()
 else:  # gcp
-    parser.add_argument('-image_folder', type=str, default='../train_images3/', help='path to images')
-    parser.add_argument('-output_folder', type=str, default='../predictions', help='path to outputs')
+    parser.add_argument('-image_folder', type=str, default='./1047.tif', help='path to images')
+    parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
     cuda = False
 
 parser.add_argument('-config_path', type=str, default='cfg/c60.cfg', help='cfg file path')
