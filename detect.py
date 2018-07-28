@@ -5,6 +5,7 @@ from sys import platform
 from models import *
 from utils.datasets import *
 from utils.utils import *
+
 targets_path = './targets_c60.mat'
 
 parser = argparse.ArgumentParser()
@@ -12,7 +13,7 @@ parser = argparse.ArgumentParser()
 if platform == 'darwin':  # macos
     parser.add_argument('-image_folder', type=str, default='./1047.tif', help='path to images')
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
-    cuda = False #torch.cuda.is_available()
+    cuda = False  # torch.cuda.is_available()
 else:  # gcp
     parser.add_argument('-image_folder', type=str, default='../train_images3/', help='path to images')
     parser.add_argument('-output_folder', type=str, default='../predictions', help='path to outputs')
@@ -27,6 +28,7 @@ parser.add_argument('-img_size', type=int, default=32 * 51, help='size of each i
 parser.add_argument('-plot_flag', type=bool, default=False, help='plots predicted images if True')
 opt = parser.parse_args()
 print(opt)
+
 
 # @profile
 def detect(opt):
@@ -81,7 +83,7 @@ def detect(opt):
             print('row %g/%g: ' % (i, ni), end='')
 
             # for j in range(nj):  # single scan
-            for j in range(nj): # for j in range(nj if i==0 else nj - 1):
+            for j in range(nj):  # for j in range(nj if i==0 else nj - 1):
                 print('%g ' % j, end='', flush=True)
 
                 # forward scan
@@ -181,7 +183,7 @@ def detect(opt):
             if os.path.isfile(results_path + '.txt'):
                 os.remove(results_path + '.txt')
 
-            results_img_path = os.path.join(opt.output_folder + '_img', path.split('/')[-1])
+            results_img_path = os.path.join(opt.output_folder, path.split('/')[-1])
             with open(results_path.replace('.bmp', '.tif') + '.txt', 'a') as file:
                 for i in unique_classes:
                     n = (detections[:, -1].cpu() == i).sum()
@@ -212,9 +214,9 @@ def detect(opt):
                 # Save generated image with detections
                 cv2.imwrite(results_img_path.replace('.bmp', '.jpg'), img)
 
-    if opt.plot_flag:
-        from scoring import score
-        score.score('data/predictions/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
+    # if opt.plot_flag:
+    #    from scoring import score
+    #    score.score('data/predictions/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
 
 
 if __name__ == '__main__':
