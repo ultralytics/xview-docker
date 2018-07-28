@@ -212,9 +212,9 @@ def detect(opt):
                 # Save generated image with detections
                 cv2.imwrite(results_img_path.replace('.bmp', '.jpg'), img)
 
-    if opt.plot_flag:
-        from scoring import score
-        score.score('data/predictions/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
+    #if opt.plot_flag:
+    #    from scoring import score
+    #    score.score('data/predictions/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
 
 
 if __name__ == '__main__':
