@@ -30,39 +30,45 @@ opt = parser.parse_args()
 print(opt)
 
 
-# @profile
 def detect(opt):
     os.system('rm -rf ' + opt.output_folder)
+    os.system('rm -rf ' + opt.output_folder + '_img')
     os.makedirs(opt.output_folder, exist_ok=True)
+    os.makedirs(opt.output_folder + '_img', exist_ok=True)
     device = torch.device('cuda:0' if cuda else 'cpu')
 
-    # load model 1
-    model = Darknet(opt.config_path, opt.img_size, targets=targets_path)
+    # Load model 1
+    model = Darknet(opt.cfg, opt.img_size)
+    checkpoint = torch.load('checkpoints/latest.pt', map_location='cpu')
+    # model.load_state_dict(checkpoint) #['model'])
+    # del checkpoint
+
     current = model.state_dict()
-    saved = torch.load('./checkpoint.pt', map_location='cuda:0' if cuda else 'cpu')
+    saved = checkpoint['model']
     # 1. filter out unnecessary keys
     saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
     # 2. overwrite entries in the existing state dict
     current.update(saved)
     # 3. load the new state dict
     model.load_state_dict(current)
-    model = model.to(device).eval()
-    del current, saved
+    del checkpoint, current, saved
+    model.to(device).eval()
 
-    # # load model 2
-    # model2 = Darknet(opt.config_path, opt.img_size, targets=targets_path)
-    # current = model2.state_dict()
-    # saved = torch.load('./checkpoint.pt', map_location='cuda:0' if cuda else 'cpu')
-    # # 1. filter out unnecessary keys
-    # saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
-    # # 2. overwrite entries in the existing state dict
-    # current.update(saved)
-    # # 3. load the new state dict
-    # model2.load_state_dict(current)
-    # model2 = model2.to(device).eval()
-    # del current, saved
+    # Load model 2
+    try:
+        model2 = ConvNetb()
+        if platform == 'darwin':  # macos
+            checkpoint = torch.load('/Users/glennjocher/Documents/PyCharmProjects/mnist/best64_6layer.pt',
+                                    map_location='cpu')
+        else:
+            checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
+        model2.load_state_dict(checkpoint['model'])
+        model2.to(device).eval()
+        del checkpoint
+    except:
+        model2 = []
 
-    # Set dataloader
+    # Set Dataloader
     classes = load_classes(opt.class_path)  # Extracts class labels from file
     dataloader = ImageFolder(opt.image_folder, batch_size=opt.batch_size, img_size=opt.img_size)
 
@@ -78,11 +84,9 @@ def detect(opt):
         length = opt.img_size
         ni = int(math.ceil(img.shape[1] / length))  # up-down
         nj = int(math.ceil(img.shape[2] / length))  # left-right
-        # for i in range(ni):  # single scan
         for i in range(ni):  # for i in range(ni - 1):
             print('row %g/%g: ' % (i, ni), end='')
 
-            # for j in range(nj):  # single scan
             for j in range(nj):  # for j in range(nj if i==0 else nj - 1):
                 print('%g ' % j, end='', flush=True)
 
@@ -146,7 +150,8 @@ def detect(opt):
                 #         preds.append(pred.unsqueeze(0))
 
         if len(preds) > 0:
-            detections = non_max_suppression(torch.cat(preds, 1), opt.conf_thres, opt.nms_thres, mat_priors, img, [])
+            detections = non_max_suppression(torch.cat(preds, 1), opt.conf_thres, opt.nms_thres, mat_priors, img,
+                                             model2, device)
             img_detections.extend(detections)
             imgs.extend(img_paths)
 
@@ -183,7 +188,7 @@ def detect(opt):
             if os.path.isfile(results_path + '.txt'):
                 os.remove(results_path + '.txt')
 
-            results_img_path = os.path.join(opt.output_folder, path.split('/')[-1])
+            results_img_path = os.path.join(opt.output_folder + '_img', path.split('/')[-1])
             with open(results_path.replace('.bmp', '.tif') + '.txt', 'a') as file:
                 for i in unique_classes:
                     n = (detections[:, -1].cpu() == i).sum()
@@ -212,11 +217,53 @@ def detect(opt):
 
             if opt.plot_flag:
                 # Save generated image with detections
-                cv2.imwrite(results_img_path.replace('.bmp', '.jpg').replace('.tif', '.jpg'), img)
+                cv2.imwrite(results_img_path.replace('.bmp', '.jpg'), img)
 
     # if opt.plot_flag:
-    #    from scoring import score
-    #    score.score('data/predictions/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
+    #     from scoring import score
+    #     score.score(opt.output_folder + '/', '/Users/glennjocher/Downloads/DATA/xview/xView_train.geojson', '.')
+
+
+class ConvNetb(nn.Module):
+    def __init__(self, num_classes=60):
+        super(ConvNetb, self).__init__()
+        n = 64  # initial convolution size
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, n, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(n),
+            nn.ReLU())
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(n, n * 2, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(n * 2),
+            nn.ReLU())
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(n * 2, n * 4, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(n * 4),
+            nn.ReLU())
+        self.layer4 = nn.Sequential(
+            nn.Conv2d(n * 4, n * 8, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(n * 8),
+            nn.ReLU())
+        self.layer5 = nn.Sequential(
+            nn.Conv2d(n * 8, n * 16, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(n * 16),
+            nn.ReLU())
+        self.layer6 = nn.Sequential(
+            nn.Conv2d(n * 16, n * 32, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(n * 32),
+            nn.ReLU())
+        self.fc = nn.Linear(int(32768/4), num_classes)  # 64 pixels, 4 layer, 64 filters
+
+    def forward(self, x):  # x.size() = [512, 1, 28, 28]
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.layer5(x)
+        x = self.layer6(x)
+        x = x.reshape(x.size(0), -1)
+        x = self.fc(x)
+        return x
 
 
 if __name__ == '__main__':
