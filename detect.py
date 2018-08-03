@@ -32,9 +32,9 @@ print(opt)
 
 def detect(opt):
     os.system('rm -rf ' + opt.output_folder)
-    os.system('rm -rf ' + opt.output_folder + '_img')
+    # os.system('rm -rf ' + opt.output_folder + '_img')
     os.makedirs(opt.output_folder, exist_ok=True)
-    os.makedirs(opt.output_folder + '_img', exist_ok=True)
+    # os.makedirs(opt.output_folder + '_img', exist_ok=True)
     device = torch.device('cuda:0' if cuda else 'cpu')
 
     # Load model 1
@@ -252,7 +252,7 @@ class ConvNetb(nn.Module):
             nn.Conv2d(n * 16, n * 32, kernel_size=3, stride=2, padding=1),
             nn.BatchNorm2d(n * 32),
             nn.ReLU())
-        self.fc = nn.Linear(int(32768/4), num_classes)  # 64 pixels, 4 layer, 64 filters
+        self.fc = nn.Linear(int(32768 / 4), num_classes)  # 64 pixels, 4 layer, 64 filters
 
     def forward(self, x):  # x.size() = [512, 1, 28, 28]
         x = self.layer1(x)
