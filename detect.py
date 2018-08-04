@@ -19,7 +19,7 @@ else:  # gcp
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
     cuda = False
 
-parser.add_argument('-cfg', type=str, default='cfg/c60.cfg', help='cfg file path')
+parser.add_argument('-cfg', type=str, default='cfg/c60_a30.cfg', help='cfg file path')
 parser.add_argument('-secondary_classifier', default=False)
 parser.add_argument('-class_path', type=str, default='./xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
