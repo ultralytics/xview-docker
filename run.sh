@@ -9,10 +9,13 @@
 # cp yolo/checkpoints/*.pt x.pt
 # python3
 # import torch; a=torch.load('x.pt', map_location='cpu')['model']; torch.save(a,'x.pt'); exit()
-#
+
+# mkdir xview/checkpoints && cp yolo/checkpoints/best450.pt xview/checkpoints/latest.pt
+# cd xview/checkpoints && python3
+# import torch; a=torch.load('latest.pt', map_location='cpu'); a['optimizer']=None; torch.save(a,'latest.pt'); exit()
+
 # sudo rm -rf xview && git clone https://github.com/ultralytics/xview
 # gsutil cp gs://ultralytics/fresh9_5_e201.pt xview/checkpoints/latest.pt && gsutil cp gs://ultralytics/6leaky573.pt xview/checkpoints/classifier.pt
-# mkdir xview/checkpoints && cp yolo/checkpoints/best.pt xview/checkpoints/latest.pt
 # sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build -t friendlyhello . && sudo docker tag friendlyhello ultralytics/xview:v24
 # time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v24 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 # sudo docker push ultralytics/xview:v24
