@@ -26,12 +26,12 @@ def create_modules(module_defs):
                                                         stride=int(module_def['stride']),
                                                         dilation=1,
                                                         padding=pad,
-                                                        bias=True))
+                                                        bias=not bn))
 
             if bn:
                 modules.add_module('batch_norm_%d' % i, nn.BatchNorm2d(filters))
             if module_def['activation'] == 'leaky':
-                modules.add_module('leaky_%d' % i, nn.LeakyReLU(0.1))
+                modules.add_module('leaky_%d' % i, nn.LeakyReLU())
 
         elif module_def['type'] == 'upsample':
             upsample = nn.Upsample(scale_factor=int(module_def['stride']), mode='bilinear', align_corners=True)
@@ -119,6 +119,8 @@ class YOLOLayer(nn.Module):
         if p.is_cuda and not self.grid_x.is_cuda:
             self.grid_x, self.grid_y = self.grid_x.cuda(), self.grid_y.cuda()
             self.anchor_w, self.anchor_h = self.anchor_w.cuda(), self.anchor_h.cuda()
+            # self.scaled_anchors = self.scaled_anchors.cuda()
+
 
         # x.view(4, 650, 19, 19) -- > (4, 10, 19, 19, 65)  # (bs, anchors, grid, grid, classes + xywh)
         p = p.view(bs, self.nA, self.bbox_attrs, nG, nG).permute(0, 1, 3, 4, 2).contiguous()  # prediction

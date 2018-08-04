@@ -243,7 +243,7 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
 
 
 # @profile
-def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model=None, device='cpu'):
+def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model2=None, device='cpu'):
     prediction = prediction.cpu()
 
     """
@@ -270,13 +270,14 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
         # for c in range(60):
         # shape_likelihood[:, c] = multivariate_normal.pdf(x, mean=mat['class_mu'][c, :2], cov=mat['class_cov'][c, :2, :2])
 
-        class_prob, class_pred = torch.max(F.softmax(pred[:, 5:], 1), 1)
-
-        # Start secondary classification of each chip
-        # class_prob, class_pred = secondary_class_detection(x, y, w, h, img.copy(), model, device)
-        # for i in range(len(class_prob2)):
-        #     if class_prob2[i] > class_prob[i]:
-        #         class_pred[i] = class_pred2[i]
+        if model2 is None:
+            class_prob, class_pred = torch.max(F.softmax(pred[:, 5:], 1), 1)
+        else:
+            # Start secondary classification of each chip
+            class_prob, class_pred = secondary_class_detection(x, y, w, h, img.copy(), model2, device)
+            # for i in range(len(class_prob2)):
+            #     if class_prob2[i] > class_prob[i]:
+            #         class_pred[i] = class_pred2[i]
 
         # Gather bbox priors
         srl = 3  # sigma rejection level
@@ -399,6 +400,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
     return output
 
 
+# @profile
 def secondary_class_detection(x, y, w, h, img, model, device):
     # 1. create 48-pixel squares from each chip
     img = np.ascontiguousarray(img.transpose([1, 2, 0]))  # torch to cv2
@@ -459,38 +461,46 @@ def createChips():
     height = 64
     full_height = 128
     X, Y = [], []
-    counter = 0
-    for i in unique_images:
-        counter += 1
+    for counter, i in enumerate(unique_images):
         print(counter)
 
         if platform == 'darwin':  # macos
             img = cv2.imread('/Users/glennjocher/Downloads/DATA/xview/train_images/%g.bmp' % i)
-        else: # gcp
+        else:  # gcp
             img = cv2.imread('../train_images/%g.bmp' % i)
 
         for j in np.nonzero(mat['id'] == i)[0]:
             c, x1, y1, x2, y2 = mat['targets'][j]
             x, y, w, h = (x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1
-            if ((c == 48) | (c == 5)) & (random.random() > 0.1):
+            if ((c == 48) | (c == 5)) & (random.random() > 0.1):  # keep only 10% of buildings and cars
                 continue
 
-            l = np.round(np.maximum(w, h) + 2) / 2 * (full_height / height)
-            x1 = np.maximum(x - l, 1).astype(np.uint16)
-            x2 = np.minimum(x + l, img.shape[1]).astype(np.uint16)
-            y1 = np.maximum(y - l, 1).astype(np.uint16)
-            y2 = np.minimum(y + l, img.shape[0]).astype(np.uint16)
+            l = np.round(np.maximum(w, h) * 1.1 + 2) / 2 * (full_height / height)  # square
+            lx, ly = l, l
+
+            # lx = np.round(w * 1.4 + 2) / 2 * (full_height / height)  # fitted
+            # ly = np.round(h * 1.4 + 2) / 2 * (full_height / height)
+
+            x1 = np.maximum(x - lx, 1).astype(np.uint16)
+            x2 = np.minimum(x + lx, img.shape[1]).astype(np.uint16)
+            y1 = np.maximum(y - ly, 1).astype(np.uint16)
+            y2 = np.minimum(y + ly, img.shape[0]).astype(np.uint16)
 
             img2 = cv2.resize(img[y1:y2, x1:x2], (full_height, full_height), interpolation=cv2.INTER_LINEAR)
 
-            X.append(img2.reshape(1, full_height, full_height, 3))
+            X.append(img2[np.newaxis])
             Y.append(c)
+
+        # plot
+        # import matplotlib.pyplot as plt
+        # for j in range(36):
+        #     plt.subplot(6, 6, j + 1).imshow(X[-36 + j][0, 32:-32, 32:-32, ::-1])
 
     X = np.concatenate(X)[:, :, :, ::-1]
     X = torch.from_numpy(np.ascontiguousarray(X))
     Y = torch.from_numpy(np.ascontiguousarray(np.array(Y))).long()
 
-    with h5py.File('class_chips64+64_tight.h5') as hf:
+    with h5py.File('chips_10pad_square.h5') as hf:
         hf.create_dataset('X', data=X)
         hf.create_dataset('Y', data=Y)
 
@@ -501,12 +511,12 @@ def plotResults():
     plt.figure(figsize=(18, 9))
     s = ['x', 'y', 'w', 'h', 'conf', 'cls', 'loss', 'prec', 'recall']
     for f in (
-              '/Users/glennjocher/Downloads/results650.txt',
-              '/Users/glennjocher/Downloads/results.txt',
-              '/Users/glennjocher/Downloads/results (1).txt'):
+            '/Users/glennjocher/Downloads/results650.txt',
+            '/Users/glennjocher/Downloads/results.txt',
+            '/Users/glennjocher/Downloads/results (1).txt'):
         results = np.loadtxt(f, usecols=[2, 3, 4, 5, 6, 7, 8, 9, 10]).T
         for i in range(9):
             plt.subplot(2, 5, i + 1)
-            plt.plot(results[i, 0:], marker='.', label=f)
+            plt.plot(results[i, 0:650], marker='.', label=f)
             plt.title(s[i])
         plt.legend()
