@@ -20,13 +20,13 @@ else:  # gcp
     cuda = False
 
 parser.add_argument('-cfg', type=str, default='cfg/c60_a30.cfg', help='cfg file path')
-parser.add_argument('-secondary_classifier', default=False)
+parser.add_argument('-secondary_classifier', type=bool, default=False)
+parser.add_argument('-plot_flag', type=bool, default=False)
 parser.add_argument('-class_path', type=str, default='./xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
 parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
 parser.add_argument('-batch_size', type=int, default=1, help='size of the batches')
 parser.add_argument('-img_size', type=int, default=32 * 51, help='size of each image dimension')
-parser.add_argument('-plot_flag', type=bool, default=False, help='plots predicted images if True')
 opt = parser.parse_args()
 print(opt)
 
