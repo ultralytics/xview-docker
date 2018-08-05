@@ -259,7 +259,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
         # Get score and class with highest confidence
 
         # cross-class NMS ---------------------------------------------
-        thresh = 0.85
+        thresh = 0.8
         a = pred.clone()
         a = a[np.argsort(-a[:, 4])]  # sort best to worst
         radius = 30  # area to search for cross-class ious
@@ -436,10 +436,11 @@ def secondary_class_detection(x, y, w, h, img, model, device):
 
     with torch.no_grad():
         classes = []
-        nB = int(n / 1000) + 1  # number of batches
+        nB = int(n / 500) + 1  # number of batches
         for i in range(nB):
-            j0 = int(i * 1000)
-            j1 = int(min(j0 + 1000, n))
+            # print(i,nB)
+            j0 = int(i * 500)
+            j1 = int(min(j0 + 500, n))
             im = images[j0:j1]
             classes.append(model(im).cpu())
 
