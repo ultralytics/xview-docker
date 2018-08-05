@@ -63,9 +63,21 @@ def detect(opt):
             checkpoint = torch.load('../mnist/6leaky681_stripped.pt', map_location='cpu')
         else:
             checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
-        model2.load_state_dict(checkpoint['model'])
+
+        current = model2.state_dict()
+        saved = checkpoint['model']
+        # 1. filter out unnecessary keys
+        saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
+        # 2. overwrite entries in the existing state dict
+        current.update(saved)
+        # 3. load the new state dict
+        model2.load_state_dict(current)
+        del checkpoint, current, saved
         model2.to(device).eval()
-        del checkpoint
+
+        # model2.load_state_dict(checkpoint['model'])
+        # model2.to(device).eval()
+        # del checkpoint
     else:
         model2 = None
 
