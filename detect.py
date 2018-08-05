@@ -60,7 +60,7 @@ def detect(opt):
     if opt.secondary_classifier:
         model2 = ConvNetb()
         if platform == 'darwin':  # macos
-            checkpoint = torch.load('../mnist/6leaky681_stripped.pt', map_location='cpu')
+            checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
         else:
             checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
 
