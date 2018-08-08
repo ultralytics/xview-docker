@@ -19,6 +19,8 @@ else:  # gcp
     parser.add_argument('-output_folder', type=str, default='./output', help='path to outputs')
     cuda = False
 
+
+# python3 detect.py -plot_flag 1
 parser.add_argument('-plot_flag', type=bool, default=False)
 parser.add_argument('-secondary_classifier', type=bool, default=False)
 parser.add_argument('-cfg', type=str, default='cfg/c60_a30.cfg', help='cfg file path')
