@@ -5,12 +5,8 @@
 # example:
 # bash run.sh ./1047.tif ./tmp
 
-# GCP:
-# cp yolo/checkpoints/*.pt x.pt
-# python3
-# import torch; a=torch.load('x.pt', map_location='cpu')['model']; torch.save(a,'x.pt'); exit()
-
-# mkdir xview/checkpoints && cp yolo/checkpoints/best450.pt xview/checkpoints/latest.pt
+# Remove Optimizer:
+# mkdir xview/checkpoints && cp yolo/checkpoints/best.pt xview/checkpoints/latest.pt
 # cd xview/checkpoints && python3
 # import torch; a=torch.load('latest.pt', map_location='cpu'); a['optimizer']=None; torch.save(a,'latest.pt'); exit()
 
