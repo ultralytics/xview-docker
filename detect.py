@@ -21,9 +21,9 @@ else:  # gcp
 
 
 # python3 detect.py -plot_flag 1
-parser.add_argument('-plot_flag', type=bool, default=False)
+parser.add_argument('-plot_flag', type=bool, default=True)
 parser.add_argument('-secondary_classifier', type=bool, default=False)
-parser.add_argument('-cfg', type=str, default='cfg/c60_a30.cfg', help='cfg file path')
+parser.add_argument('-cfg', type=str, default='cfg/c60_a30symmetric.cfg', help='cfg file path')
 parser.add_argument('-class_path', type=str, default='./xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
 parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
@@ -31,7 +31,6 @@ parser.add_argument('-batch_size', type=int, default=1, help='size of the batche
 parser.add_argument('-img_size', type=int, default=32 * 51, help='size of each image dimension')
 opt = parser.parse_args()
 print(opt)
-
 
 def detect(opt):
     if opt.plot_flag:
@@ -43,26 +42,28 @@ def detect(opt):
 
     # Load model 1
     model = Darknet(opt.cfg, opt.img_size)
-    checkpoint = torch.load('checkpoints/latest.pt', map_location='cpu')
-    # model.load_state_dict(checkpoint) #['model'])
-    # del checkpoint
+    checkpoint = torch.load('checkpoints/best_lite.pt', map_location='cpu')
 
-    current = model.state_dict()
-    saved = checkpoint['model']
-    # 1. filter out unnecessary keys
-    saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
-    # 2. overwrite entries in the existing state dict
-    current.update(saved)
-    # 3. load the new state dict
-    model.load_state_dict(current)
-    del checkpoint, current, saved
+    model.load_state_dict(checkpoint['model'])
     model.to(device).eval()
+    del checkpoint
+
+    # current = model.state_dict()
+    # saved = checkpoint['model']
+    # # 1. filter out unnecessary keys
+    # saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
+    # # 2. overwrite entries in the existing state dict
+    # current.update(saved)
+    # # 3. load the new state dict
+    # model.load_state_dict(current)
+    # model.to(device).eval()
+    # del checkpoint, current, saved
 
     # Load model 2
     if opt.secondary_classifier:
         model2 = ConvNetb()
         if platform == 'darwin':  # macos
-            checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
+            checkpoint = torch.load('../mnist/10pad_6ReLU_fullyconnected.pt', map_location='cpu')
         else:
             checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
 
@@ -95,6 +96,9 @@ def detect(opt):
     for batch_i, (img_paths, img) in enumerate(dataloader):
         print('\n', batch_i, img.shape, end=' ')
 
+        img_ud = np.ascontiguousarray(np.flip(img, axis=1))
+        img_lr = np.ascontiguousarray(np.flip(img, axis=2))
+
         preds = []
         length = opt.img_size
         ni = int(math.ceil(img.shape[1] / length))  # up-down
@@ -110,14 +114,13 @@ def detect(opt):
                 y1 = y2 - length
                 x2 = min((j + 1) * length, img.shape[2])
                 x1 = x2 - length
-                chip = img[:, y1:y2, x1:x2]
 
                 # Get detections
-                chip = torch.from_numpy(chip).unsqueeze(0).to(device)
                 with torch.no_grad():
+                    # Normal orientation
+                    chip = torch.from_numpy(img[:, y1:y2, x1:x2]).unsqueeze(0).to(device)
                     pred = model(chip)
                     pred = pred[pred[:, :, 4] > opt.conf_thres]
-
                     # if (j > 0) & (len(pred) > 0):
                     #     pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 2)]  # near left border
                     # if (j < nj) & (len(pred) > 0):
@@ -126,43 +129,28 @@ def detect(opt):
                     #     pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 2)]  # near top border
                     # if (i < ni) & (len(pred) > 0):
                     #     pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 606)]  # near bottom border
-
                     if len(pred) > 0:
                         pred[:, 0] += x1
                         pred[:, 1] += y1
                         preds.append(pred.unsqueeze(0))
 
-                # # backward scan
-                # y2 = max(img.shape[1] - i * length, length)
-                # y1 = y2 - length
-                # x2 = max(img.shape[2] - j * length, length)
-                # x1 = x2 - length
-                # chip = img[:, y1:y2, x1:x2]
-                #
-                # # plot
-                # #import matplotlib.pyplot as plt
-                # #plt.subplot(ni, nj, i * nj + j + 1).imshow(chip[1])
-                # # plt.plot(labels[:, [1, 3, 3, 1, 1]].T, labels[:, [2, 2, 4, 4, 2]].T, '.-')
-                #
-                # # Get detections
-                # chip = torch.from_numpy(chip).unsqueeze(0).to(device)
-                # with torch.no_grad():
-                #     pred = model2(chip)
-                #     pred = pred[pred[:, :, 4] > opt.conf_thres]
-                #
-                #     # if (j < nj) & (len(pred) > 0):
-                #     #     pred = pred[(pred[:, 0] - pred[:, 2] / 2 > 2)]  # near left border
-                #     # if (j > 0) & (len(pred) > 0):
-                #     #     pred = pred[(pred[:, 0] + pred[:, 2] / 2 < 606)]  # near right border
-                #     # if (i < ni) & (len(pred) > 0):
-                #     #     pred = pred[(pred[:, 1] - pred[:, 3] / 2 > 2)]  # near top border
-                #     # if (i > 0) & (len(pred) > 0):
-                #     #     pred = pred[(pred[:, 1] + pred[:, 3] / 2 < 606)]  # near bottom border
-                #
-                #     if len(pred) > 0:
-                #         pred[:, 0] += x1
-                #         pred[:, 1] += y1
-                #         preds.append(pred.unsqueeze(0))
+                    # # Flipped Up-Down
+                    # chip = torch.from_numpy(img_ud[:, y1:y2, x1:x2]).unsqueeze(0).to(device)
+                    # pred = model(chip)
+                    # pred = pred[pred[:, :, 4] > opt.conf_thres]
+                    # if len(pred) > 0:
+                    #     pred[:, 0] += x1
+                    #     pred[:, 1] = img.shape[1] - (pred[:, 1] + y1)
+                    #     preds.append(pred.unsqueeze(0))
+
+                    # # Flipped Left-Right
+                    # chip = torch.from_numpy(img_lr[:, y1:y2, x1:x2]).unsqueeze(0).to(device)
+                    # pred = model(chip)
+                    # pred = pred[pred[:, :, 4] > opt.conf_thres]
+                    # if len(pred) > 0:
+                    #     pred[:, 0] = img.shape[2] - (pred[:, 0] + x1)
+                    #     pred[:, 1] += y1
+                    #     preds.append(pred.unsqueeze(0))
 
         if len(preds) > 0:
             detections = non_max_suppression(torch.cat(preds, 1), opt.conf_thres, opt.nms_thres, mat_priors, img,
@@ -232,7 +220,7 @@ def detect(opt):
 
             if opt.plot_flag:
                 # Save generated image with detections
-                cv2.imwrite(results_img_path.replace('.bmp', '.jpg'), img)
+                cv2.imwrite(results_img_path.replace('.bmp', '.jpg').replace('.tif', '.jpg'), img)
 
     if opt.plot_flag:
         from scoring import score
@@ -263,23 +251,24 @@ class ConvNetb(nn.Module):
             nn.Conv2d(n * 8, n * 16, kernel_size=3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(n * 16),
             nn.LeakyReLU())
-        self.layer6 = nn.Sequential(
-            nn.Conv2d(n * 16, n * 32, kernel_size=3, stride=2, padding=1, bias=False),
-            nn.BatchNorm2d(n * 32),
-            nn.LeakyReLU())
-        self.fc = nn.Linear(int(32768/4), num_classes)  # 64 pixels, 4 layer, 64 filters
+        # self.layer6 = nn.Sequential(
+        #     nn.Conv2d(n * 16, n * 32, kernel_size=3, stride=2, padding=1, bias=False),
+        #     nn.BatchNorm2d(n * 32),
+        #     nn.LeakyReLU())
 
+        # self.fc = nn.Linear(int(8192), num_classes)  # 64 pixels, 4 layer, 64 filters
+        self.fully_convolutional = nn.Conv2d(n * 16, 60, kernel_size=4, stride=1, padding=0, bias=True)
 
-    def forward(self, x):  # x.size() = [512, 1, 28, 28]
+    def forward(self, x):  # 500 x 1 x 64 x 64
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
         x = self.layer5(x)
-        x = self.layer6(x)
-        x = x.reshape(x.size(0), -1)
-        x = self.fc(x)
-        return x
+        # x = self.layer6(x)
+        # x = self.fc(x.reshape(x.size(0), -1))
+        x = self.fully_convolutional(x)
+        return x.squeeze()  # 500 x 60
 
 
 if __name__ == '__main__':
