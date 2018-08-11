@@ -103,6 +103,7 @@ class YOLOLayer(nn.Module):
         self.anchor_w = self.scaled_anchors[:, 0:1].view((1, nA, 1, 1))
         self.anchor_h = self.scaled_anchors[:, 1:2].view((1, nA, 1, 1))
 
+    # @profile
     def forward(self, p, targets=None, requestPrecision=False, weight=None, epoch=None):
         FT = torch.cuda.FloatTensor if p.is_cuda else torch.FloatTensor
         device = torch.device('cuda:0' if p.is_cuda else 'cpu')

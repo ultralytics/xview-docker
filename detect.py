@@ -32,6 +32,7 @@ parser.add_argument('-img_size', type=int, default=32 * 51, help='size of each i
 opt = parser.parse_args()
 print(opt)
 
+# @profile
 def detect(opt):
     if opt.plot_flag:
         os.system('rm -rf ' + opt.output_folder + '_img')
