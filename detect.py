@@ -43,7 +43,7 @@ def detect(opt):
 
     # Load model 1
     model = Darknet(opt.cfg, opt.img_size)
-    checkpoint = torch.load('checkpoints/best_lite.pt', map_location='cpu')
+    checkpoint = torch.load('checkpoints/checkpoint.pt', map_location='cpu')
 
     model.load_state_dict(checkpoint['model'])
     model.to(device).eval()
