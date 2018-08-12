@@ -43,7 +43,7 @@ def detect(opt):
 
     # Load model 1
     model = Darknet(opt.cfg, opt.img_size)
-    checkpoint = torch.load('checkpoints/checkpoint.pt', map_location='cpu')
+    checkpoint = torch.load('checkpoints/best.pt', map_location='cpu')
 
     model.load_state_dict(checkpoint['model'])
     model.to(device).eval()
@@ -97,8 +97,8 @@ def detect(opt):
     for batch_i, (img_paths, img) in enumerate(dataloader):
         print('\n', batch_i, img.shape, end=' ')
 
-        img_ud = np.ascontiguousarray(np.flip(img, axis=1))
-        img_lr = np.ascontiguousarray(np.flip(img, axis=2))
+        # img_ud = np.ascontiguousarray(np.flip(img, axis=1))
+        # img_lr = np.ascontiguousarray(np.flip(img, axis=2))
 
         preds = []
         length = opt.img_size
