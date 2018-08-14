@@ -63,25 +63,11 @@ def detect(opt):
     # Load model 2
     if opt.secondary_classifier:
         model2 = ConvNetb()
-        if platform == 'darwin':  # macos
-            checkpoint = torch.load('../mnist/10pad_6ReLU_fullyconnected.pt', map_location='cpu')
-        else:
-            checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
+        checkpoint = torch.load('checkpoints/classifier.pt', map_location='cpu')
 
-        current = model2.state_dict()
-        saved = checkpoint['model']
-        # 1. filter out unnecessary keys
-        saved = {k: v for k, v in saved.items() if ((k in current) and (current[k].shape == v.shape))}
-        # 2. overwrite entries in the existing state dict
-        current.update(saved)
-        # 3. load the new state dict
-        model2.load_state_dict(current)
-        del checkpoint, current, saved
+        model2.load_state_dict(checkpoint['model'])
         model2.to(device).eval()
-
-        # model2.load_state_dict(checkpoint['model'])
-        # model2.to(device).eval()
-        # del checkpoint
+        del checkpoint
     else:
         model2 = None
 
