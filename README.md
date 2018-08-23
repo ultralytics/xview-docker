@@ -7,7 +7,7 @@ http://www.ultralytics.com  
 
 # Description
 
-The https://github.com/ultralytics/xview-docker repo contains code to create xview challenge docker containers for submission. Credit to P.J. Reddie for YOLO (https://pjreddie.com/darknet/yolo/) and to Erik Lindernoren for the pytorch implementation (https://github.com/eriklindernoren/PyTorch-YOLOv3).
+The https://github.com/ultralytics/xview-docker repo contains code to create an xView docker container for submission to the xView challenge.
 
 # Requirements
 
@@ -16,10 +16,10 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 - `numpy`
 - `scipy`
 - `torch`
-- `torchvision`
 - `opencv-python`
 
 # Running
+
 - Run `detect.py` to process example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`. `run.sh` contains directions for dockerizing the repository for submission in the xview challenge https://challenge.xviewdataset.org/ 
 
 ![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
