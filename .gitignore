@@ -9,9 +9,9 @@
 *.weights
 *.tif.txt
 *.pt
-xview_predictions
 !zidane.jpg
-!images/*
+!5.jpg
+!1047.jpg
 scoring
 results*
 

@@ -20,7 +20,7 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 - `opencv-python`
 
 # Running
-- From python run `detect.py` to process images in `data/samples/` folder. Results are written to  `output/` folder.
+- Run `detect.py` to process example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`. `run.sh` contains directions for dockerizing the repository for submission in the xview challenge https://challenge.xviewdataset.org/ 
 
 ![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
 
