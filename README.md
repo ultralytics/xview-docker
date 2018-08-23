@@ -20,7 +20,7 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 
 # Running
 
-- Run `detect.py` to process example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`. `run.sh` contains directions for dockerizing the repository for submission in the xview challenge https://challenge.xviewdataset.org/ 
+- Run `detect.py` to process example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`. `run.sh` contains directions for dockerizing the repository for submission in the xView challenge https://challenge.xviewdataset.org/ 
 
 ![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
 
