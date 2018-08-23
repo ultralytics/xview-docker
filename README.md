@@ -7,7 +7,7 @@ http://www.ultralytics.com  
 
 # Description
 
-The https://github.com/ultralytics/xview-docker repo contains code to create an xView docker container for submission to the xView challenge https://challenge.xviewdataset.org/.
+The https://github.com/ultralytics/xview-docker repo contains code to create an xView docker container for submission to the xView challenge: https://challenge.xviewdataset.org/.
 
 # Requirements
 
