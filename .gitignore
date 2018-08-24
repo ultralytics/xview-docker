@@ -12,11 +12,11 @@
 !zidane.jpg
 !5.jpg
 !1047.jpg
+!1047.tif.txt
 scoring
 results*
 
 checkpoints
-output
 results.txt
 metrics.txt
 printedResults.txt
