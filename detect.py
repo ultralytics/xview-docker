@@ -6,7 +6,7 @@ from models import *
 from utils.datasets import *
 from utils.utils import *
 
-targets_path = './targets_c60.mat'
+targets_path = 'utils/targets_c60.mat'
 
 parser = argparse.ArgumentParser()
 # Get data configuration
