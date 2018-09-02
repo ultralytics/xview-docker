@@ -23,15 +23,19 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 `run.sh` contains directions for dockerizing this repository for submission in the xView challenge. The steps are:
 
 ### 1. Copy Checkpoint
-Copy best checkpoint from `xview-yolov3` to here (https://github.com/ultralytics/xview-yolov3)
+Copy best checkpoint from `xview-yolov3` (https://github.com/ultralytics/xview-yolov3)
 ````
-$ mkdir xview/checkpoints && cp xview-yolov3/checkpoints/best.pt xview/checkpoints/best.pt
+$ mkdir xview/checkpoints
+$ cp xview-yolov3/checkpoints/best.pt xview/checkpoints/best.pt
 ````
 
 ### 2. Build and Tag Container
-Prune older containers, move into `/xview` directory, assign permissions to `run.sh`, build and tag container (tagged as `ultralytics/xview:v30` in this case)
+Prune older containers, move into `/xview` directory, assign permissions to `run.sh`, and build and tag container (tagged as `ultralytics/xview:v30` in this example)
 ````
-$ sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build -t friendlyhello . && sudo docker tag friendlyhello ultralytics/xview:v30
+$ sudo docker image prune -a
+$ cd xview && chmod +x run.sh
+$ sudo docker build -t friendlyhello . 
+$ sudo docker tag friendlyhello ultralytics/xview:v30
 ````
 
 ### 3. Test Example Image
