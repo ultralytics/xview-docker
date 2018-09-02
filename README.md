@@ -2,12 +2,12 @@
 
 # Introduction
 
-This directory contains software developed by Ultralytics LLC, and **is freely available for redistribution under the GPL-3.0 license**. For more information on Ultralytics projects please visit:
+This directory contains software developed by Ultralytics LLC, and **is freely available for redistribution under the MIT license**. For more information on Ultralytics projects please visit:
 http://www.ultralytics.com  
 
 # Description
 
-The https://github.com/ultralytics/xview-docker repo contains code to create an xView docker container for submission to the xView challenge: https://challenge.xviewdataset.org/.
+The https://github.com/ultralytics/xview-docker repo contains code to create an xView docker container for submission to the xView challenge: https://challenge.xviewdataset.org/. This repo is intended for use in conjunction with models trained using https://github.com/ultralytics/xview-yolov3.
 
 # Requirements
 
@@ -20,7 +20,29 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 
 # Running
 
-- Run `detect.py` to process example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`. `run.sh` contains directions for dockerizing the repository for submission in the xView challenge https://challenge.xviewdataset.org/ 
+`run.sh` contains directions for dockerizing this repository for submission in the xView challenge. The steps are:
+
+Copy best checkpoint from `xview-yolov3` to here (https://github.com/ultralytics/xview-yolov3)
+````
+mkdir xview/checkpoints && cp xview-yolov3/checkpoints/best.pt xview/checkpoints/best.pt
+````
+
+Prune older containers, move into `/xview` directory, assign permissions to `run.sh`, build and tag container (tagged as `ultralytics/xview:v30` in this case)
+````
+sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build -t friendlyhello . && sudo docker tag friendlyhello ultralytics/xview:v30
+````
+
+Before submission, run `detect.py` to test example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`.
+````
+time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
+````
+
+Push container to dockerhub (https://hub.docker.com/)
+```
+sudo docker push ultralytics/xview:v30
+```
+
+Container now resides at https://hub.docker.com/r/ultralytics/xview/
 
 ![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
 
