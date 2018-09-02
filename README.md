@@ -24,27 +24,30 @@ Python 3.6 or later with the following `pip3 install -U -r requirements.txt` pac
 
 Copy best checkpoint from `xview-yolov3` to here (https://github.com/ultralytics/xview-yolov3)
 ````
-mkdir xview/checkpoints && cp xview-yolov3/checkpoints/best.pt xview/checkpoints/best.pt
+$ mkdir xview/checkpoints && cp xview-yolov3/checkpoints/best.pt xview/checkpoints/best.pt
 ````
+
 
 Prune older containers, move into `/xview` directory, assign permissions to `run.sh`, build and tag container (tagged as `ultralytics/xview:v30` in this case)
 ````
-sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build -t friendlyhello . && sudo docker tag friendlyhello ultralytics/xview:v30
+$ sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build -t friendlyhello . && sudo docker tag friendlyhello ultralytics/xview:v30
 ````
 
-Before submission, run `detect.py` to test example image `1047.tif`. `detect.py` looks for weightfile `best.pt` in `checkpoints/`.
+
+Before submission, run `detect.py` to test example image `1047.tif`.
 ````
-time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
+$ time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 ````
+![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
+
 
 Push container to dockerhub (https://hub.docker.com/)
 ```
-sudo docker push ultralytics/xview:v30
+$ sudo docker push ultralytics/xview:v30
 ```
 
-Container now resides at https://hub.docker.com/r/ultralytics/xview/
 
-![Alt](https://github.com/ultralytics/xview/blob/master/output_img/1047.jpg "example")
+Container now resides at https://hub.docker.com/r/ultralytics/xview/
 
 # Contact
 
