@@ -39,7 +39,7 @@ $ sudo docker tag friendlyhello ultralytics/xview:v30
 ```
 
 ### 3. Test Example Image
-Run `detect.py` to test example image `1047.tif` for speed and errors.
+Run `detect.py` to test inference on example image `1047.tif` under CPU and memory constraints.
 ``` bash
 $ time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 ```
