@@ -11,7 +11,7 @@ The https://github.com/ultralytics/xview-docker repo contains code to create an 
 
 # Requirements
 
-Python 3.6 or later with the following `pip3 install -U -r requirements.txt` packages:
+Docker and Python 3.6 or later with the following `pip3 install -U -r requirements.txt` packages:
 
 - `numpy`
 - `scipy`
