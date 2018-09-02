@@ -52,7 +52,7 @@ Push container to DockerHub (https://hub.docker.com/)
 $ sudo docker push ultralytics/xview:v30
 ```
 
-Container now resides at https://hub.docker.com/r/ultralytics/xview/
+Container now resides at https://hub.docker.com/r/ultralytics/xview/ and is ready for submission!
 
 # Contact
 
