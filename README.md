@@ -30,7 +30,7 @@ $ cp xview-yolov3/checkpoints/best.pt xview-docker/checkpoints
 ```
 
 ### 2. Build and Tag Container
-Prune older containers, move into `/xview` directory, assign permissions to `run.sh`, and build and tag container (tagged as `ultralytics/xview:v30` in this example)
+Prune older containers, move into `xview-docker` directory, assign permissions to `run.sh`, and build and tag container (tagged as `ultralytics/xview:v30` in this example)
 ``` bash
 $ sudo docker image prune -a
 $ cd xview-docker && chmod +x run.sh
