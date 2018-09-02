@@ -34,7 +34,7 @@ $ sudo docker image prune -a && cd xview && chmod +x run.sh && sudo docker build
 ````
 
 
-Before submission, run `detect.py` to test example image `1047.tif`.
+Run `detect.py` to test example image `1047.tif` for speed and errors.
 ````
 $ time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 ````
