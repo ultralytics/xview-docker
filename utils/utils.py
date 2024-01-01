@@ -6,14 +6,12 @@ import torch
 import torch.nn.functional as F
 
 # set printoptions
-torch.set_printoptions(linewidth=320, precision=5, profile='long')
-np.set_printoptions(linewidth=320, formatter={'float_kind': '{:11.5g}'.format})  # format short g, %precision=5
+torch.set_printoptions(linewidth=320, precision=5, profile="long")
+np.set_printoptions(linewidth=320, formatter={"float_kind": "{:11.5g}".format})  # format short g, %precision=5
 
 
 def load_classes(path):
-    """
-    Loads class labels at 'path'
-    """
+    """Loads class labels at 'path'."""
     fp = open(path, "r")
     names = fp.read().split("\n")[:-1]
     return names
@@ -22,42 +20,221 @@ def load_classes(path):
 def modelinfo(model):
     nparams = sum(x.numel() for x in model.parameters())
     ngradients = sum(x.numel() for x in model.parameters() if x.requires_grad)
-    print('\n%4s %70s %9s %12s %20s %12s %12s' % ('', 'name', 'gradient', 'parameters', 'shape', 'mu', 'sigma'))
+    print("\n%4s %70s %9s %12s %20s %12s %12s" % ("", "name", "gradient", "parameters", "shape", "mu", "sigma"))
     for i, (name, p) in enumerate(model.named_parameters()):
-        name = name.replace('module_list.', '')
-        print('%4g %70s %9s %12g %20s %12g %12g' % (
-            i, name, p.requires_grad, p.numel(), list(p.shape), p.mean(), p.std()))
-    print('\n%g layers, %g parameters, %g gradients' % (i + 1, nparams, ngradients))
+        name = name.replace("module_list.", "")
+        print(
+            "%4g %70s %9s %12g %20s %12g %12g" % (i, name, p.requires_grad, p.numel(), list(p.shape), p.mean(), p.std())
+        )
+    print("\n%g layers, %g parameters, %g gradients" % (i + 1, nparams, ngradients))
 
 
 def xview_class2name(classes):
-    with open('data/xview.names', 'r') as f:
+    with open("data/xview.names", "r") as f:
         x = f.readlines()
-    return x[classes].replace('\n', '')
+    return x[classes].replace("\n", "")
 
 
 def xview_indices2classes(indices):  # remap xview classes 11-94 to 0-61
-    class_list = [11, 12, 13, 15, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 35, 36, 37, 38, 40, 41,
-                  42, 44, 45, 47, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66, 71, 72, 73, 74,
-                  76, 77, 79, 83, 84, 86, 89, 91, 93, 94]
+    class_list = [
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        19,
+        20,
+        21,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        40,
+        41,
+        42,
+        44,
+        45,
+        47,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        71,
+        72,
+        73,
+        74,
+        76,
+        77,
+        79,
+        83,
+        84,
+        86,
+        89,
+        91,
+        93,
+        94,
+    ]
     return class_list[indices]
 
 
 def xview_class_weights(indices):  # weights of each class in the training set, normalized to mu = 1
     weights = 1 / torch.FloatTensor(
-        [74, 364, 713, 71, 2925, 209767, 6925, 1101, 3612, 12134, 5871, 3640, 860, 4062, 895, 149, 174, 17, 1624, 1846,
-         125, 122, 124, 662, 1452, 697, 222, 190, 786, 200, 450, 295, 79, 205, 156, 181, 70, 64, 337, 1352, 336, 78,
-         628, 841, 287, 83, 702, 1177, 313865, 195, 1081, 882, 1059, 4175, 123, 1700, 2317, 1579, 368, 85])
+        [
+            74,
+            364,
+            713,
+            71,
+            2925,
+            209767,
+            6925,
+            1101,
+            3612,
+            12134,
+            5871,
+            3640,
+            860,
+            4062,
+            895,
+            149,
+            174,
+            17,
+            1624,
+            1846,
+            125,
+            122,
+            124,
+            662,
+            1452,
+            697,
+            222,
+            190,
+            786,
+            200,
+            450,
+            295,
+            79,
+            205,
+            156,
+            181,
+            70,
+            64,
+            337,
+            1352,
+            336,
+            78,
+            628,
+            841,
+            287,
+            83,
+            702,
+            1177,
+            313865,
+            195,
+            1081,
+            882,
+            1059,
+            4175,
+            123,
+            1700,
+            2317,
+            1579,
+            368,
+            85,
+        ]
+    )
     weights /= weights.sum()
     return weights[indices]
 
 
 def xview_feedback_weights(indices):
     weights = 1 / torch.FloatTensor(
-        [0, 0.175, 0.72, 1.0, 0.0441, 0.486, 0.168, 0.0233, 0.0304, 0.0177, 0.087, 0.209, 0.0308, 0.103, 0.0927, 0.269,
-         0.285, 0, 0.294, 0.675, 0, 0.505, 0.456, 0.0557, 0.157, 0, 0.621, 0.24, 0.222, 0.222, 0.145, 0.0417, 0.429,
-         0.0606, 0.025, 0, 0.547, 0.531, 0.00133, 0.194, 0.547, 0.355, 0.17, 0.143, 0.233, 0.121, 0.00567, 0.0208,
-         0.517, 0.0184, 0.0255, 0.0191, 0.0813, 0.039, 0.233, 0.283, 0.0904, 0.0745, 0.402, 0])
+        [
+            0,
+            0.175,
+            0.72,
+            1.0,
+            0.0441,
+            0.486,
+            0.168,
+            0.0233,
+            0.0304,
+            0.0177,
+            0.087,
+            0.209,
+            0.0308,
+            0.103,
+            0.0927,
+            0.269,
+            0.285,
+            0,
+            0.294,
+            0.675,
+            0,
+            0.505,
+            0.456,
+            0.0557,
+            0.157,
+            0,
+            0.621,
+            0.24,
+            0.222,
+            0.222,
+            0.145,
+            0.0417,
+            0.429,
+            0.0606,
+            0.025,
+            0,
+            0.547,
+            0.531,
+            0.00133,
+            0.194,
+            0.547,
+            0.355,
+            0.17,
+            0.143,
+            0.233,
+            0.121,
+            0.00567,
+            0.0208,
+            0.517,
+            0.0184,
+            0.0255,
+            0.0191,
+            0.0813,
+            0.039,
+            0.233,
+            0.283,
+            0.0904,
+            0.0745,
+            0.402,
+            0,
+        ]
+    )
     weights = torch.clamp(weights, 0, 500)
     weights /= weights.max()
     return weights[indices]
@@ -78,9 +255,9 @@ def plot_one_box(x, im, color=None, label=None, line_thickness=None):
 
 def weights_init_normal(m):
     classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
+    if classname.find("Conv") != -1:
         torch.nn.init.normal_(m.weight.data, 0.0, 0.03)
-    elif classname.find('BatchNorm2d') != -1:
+    elif classname.find("BatchNorm2d") != -1:
         torch.nn.init.normal_(m.weight.data, 1.0, 0.03)
         torch.nn.init.constant_(m.bias.data, 0.0)
 
@@ -95,7 +272,9 @@ def xyxy2xywh(box):
 
 
 def compute_ap(recall, precision):
-    """ Compute the average precision, given the recall and precision curves.
+    """
+    Compute the average precision, given the recall and precision curves.
+
     Code originally from https://github.com/rbgirshick/py-faster-rcnn.
     # Arguments
         recall:    The recall curve (list).
@@ -105,8 +284,8 @@ def compute_ap(recall, precision):
     """
     # correct AP calculation
     # first append sentinel values at the end
-    mrec = np.concatenate(([0.], recall, [1.]))
-    mpre = np.concatenate(([0.], precision, [0.]))
+    mrec = np.concatenate(([0.0], recall, [1.0]))
+    mpre = np.concatenate(([0.0], precision, [0.0]))
 
     # compute the precision envelope
     for i in range(mpre.size - 1, 0, -1):
@@ -125,9 +304,7 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
     # if len(box1.shape) == 1:
     #    box1 = box1.reshape(1, 4)
 
-    """
-    Returns the IoU of two bounding boxes
-    """
+    """Returns the IoU of two bounding boxes."""
     if x1y1x2y2:
         # Get the coordinates of bounding boxes
         b1_x1, b1_y1, b1_x2, b1_y2 = box1[:, 0], box1[:, 1], box1[:, 2], box1[:, 3]
@@ -139,7 +316,7 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
         b2_x1, b2_x2 = box2[:, 0] - box2[:, 2] / 2, box2[:, 0] + box2[:, 2] / 2
         b2_y1, b2_y2 = box2[:, 1] - box2[:, 3] / 2, box2[:, 1] + box2[:, 3] / 2
 
-    # get the corrdinates of the intersection rectangle
+    # get the coordinates of the intersection rectangle
     inter_rect_x1 = torch.max(b1_x1, b2_x1)
     inter_rect_y1 = torch.max(b1_y1, b2_y1)
     inter_rect_x2 = torch.min(b1_x2, b2_x2)
@@ -154,9 +331,7 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
 
 
 def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG, requestPrecision):
-    """
-    returns nGT, nCorrect, tx, ty, tw, th, tconf, tcls
-    """
+    """Returns nGT, nCorrect, tx, ty, tw, th, tconf, tcls."""
     nB = len(target)  # target.shape[0]
     nT = [len(x) for x in target]  # torch.argmin(target[:, :, 4], 1)  # targets per image
     tx = torch.zeros(nB, nA, nG, nG)  # batch size (4), number of anchors (3), number of grid points (13)
@@ -243,9 +418,8 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
 
 
 # @profile
-def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model2=None, device='cpu'):
+def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model2=None, device="cpu"):
     prediction = prediction.cpu()
-
     """
     Removes detections with lower object confidence score than 'conf_thres' and performs
     Non-Maximum Suppression to further filter detections.
@@ -267,12 +441,12 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
             if i >= len(a) - 1:
                 break
 
-            close = (np.abs(a[i, 0] - a[i + 1:, 0]) < radius) & (np.abs(a[i, 1] - a[i + 1:, 1]) < radius)
+            close = (np.abs(a[i, 0] - a[i + 1 :, 0]) < radius) & (np.abs(a[i, 1] - a[i + 1 :, 1]) < radius)
             close = close.nonzero()
 
             if len(close) > 0:
                 close = close + i + 1
-                iou = bbox_iou(a[i:i + 1, :4], a[close.squeeze(), :4].reshape(-1, 4), x1y1x2y2=False)
+                iou = bbox_iou(a[i : i + 1, :4], a[close.squeeze(), :4].reshape(-1, 4), x1y1x2y2=False)
                 bad = close[iou > thresh]
 
                 if len(bad) > 0:
@@ -305,10 +479,10 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
 
         # Gather bbox priors
         srl = 3  # sigma rejection level
-        mu = mat['class_mu'][class_pred].T
-        sigma = mat['class_sigma'][class_pred].T * srl
+        mu = mat["class_mu"][class_pred].T
+        sigma = mat["class_sigma"][class_pred].T * srl
 
-        v = ((pred[:, 4] > conf_thres) & (class_prob > .3)).numpy()
+        v = ((pred[:, 4] > conf_thres) & (class_prob > 0.3)).numpy()
         v *= (a > 20) & (w > 4) & (h > 4) & (ar < 10) & (ar > 1 / 10)
         v *= (log_w > mu[0] - sigma[0]) & (log_w < mu[0] + sigma[0])
         v *= (log_h > mu[1] - sigma[1]) & (log_h < mu[1] + sigma[1])
@@ -365,8 +539,9 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
             max_detections = torch.cat(max_detections).data
             # print(max_detections)
             # Add max detections to outputs
-            output[image_i] = max_detections if output[image_i] is None else torch.cat(
-                (output[image_i], max_detections))
+            output[image_i] = (
+                max_detections if output[image_i] is None else torch.cat((output[image_i], max_detections))
+            )
 
         # # NMS2
         # for c in unique_labels:
@@ -414,7 +589,7 @@ def secondary_class_detection(x, y, w, h, img, model, device):
     n = len(x)
     images = []
     for i in range(n):
-        images.append(cv2.resize(img[y1[i]:y2[i], x1[i]:x2[i]], (height, height), interpolation=cv2.INTER_LINEAR))
+        images.append(cv2.resize(img[y1[i] : y2[i], x1[i] : x2[i]], (height, height), interpolation=cv2.INTER_LINEAR))
 
     # # plot
     # images_numpy = images.copy()
@@ -455,8 +630,8 @@ def createChips():
     import h5py
     from sys import platform
 
-    mat = scipy.io.loadmat('utils/targets_c60.mat')
-    unique_images = np.unique(mat['id'])
+    mat = scipy.io.loadmat("utils/targets_c60.mat")
+    unique_images = np.unique(mat["id"])
 
     height = 64
     full_height = 128
@@ -464,13 +639,13 @@ def createChips():
     for counter, i in enumerate(unique_images):
         print(counter)
 
-        if platform == 'darwin':  # macos
-            img = cv2.imread('/Users/glennjocher/Downloads/DATA/xview/train_images/%g.bmp' % i)
+        if platform == "darwin":  # macos
+            img = cv2.imread("/Users/glennjocher/Downloads/DATA/xview/train_images/%g.bmp" % i)
         else:  # gcp
-            img = cv2.imread('../train_images/%g.bmp' % i)
+            img = cv2.imread("../train_images/%g.bmp" % i)
 
-        for j in np.nonzero(mat['id'] == i)[0]:
-            c, x1, y1, x2, y2 = mat['targets'][j]
+        for j in np.nonzero(mat["id"] == i)[0]:
+            c, x1, y1, x2, y2 = mat["targets"][j]
             x, y, w, h = (x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1
             if ((c == 48) | (c == 5)) & (random.random() > 0.1):  # keep only 10% of buildings and cars
                 continue
@@ -500,24 +675,26 @@ def createChips():
     X = torch.from_numpy(np.ascontiguousarray(X))
     Y = torch.from_numpy(np.ascontiguousarray(np.array(Y))).long()
 
-    with h5py.File('chips_0pad_square.h5') as hf:
-        hf.create_dataset('X', data=X)
-        hf.create_dataset('Y', data=Y)
+    with h5py.File("chips_0pad_square.h5") as hf:
+        hf.create_dataset("X", data=X)
+        hf.create_dataset("Y", data=Y)
 
 
 def plotResults():
     import numpy as np
     import matplotlib.pyplot as plt
+
     plt.figure(figsize=(18, 9))
-    s = ['x', 'y', 'w', 'h', 'conf', 'cls', 'loss', 'prec', 'recall']
+    s = ["x", "y", "w", "h", "conf", "cls", "loss", "prec", "recall"]
     for f in (
-            '/Users/glennjocher/Downloads/results650.txt',
-            '/Users/glennjocher/Downloads/results_71.txt',
-            '/Users/glennjocher/Downloads/results.txt',
-            '/Users/glennjocher/Downloads/results (1).txt'):
+        "/Users/glennjocher/Downloads/results650.txt",
+        "/Users/glennjocher/Downloads/results_71.txt",
+        "/Users/glennjocher/Downloads/results.txt",
+        "/Users/glennjocher/Downloads/results (1).txt",
+    ):
         results = np.loadtxt(f, usecols=[2, 3, 4, 5, 6, 7, 8, 9, 10]).T
         for i in range(9):
             plt.subplot(2, 5, i + 1)
-            plt.plot(results[i, :], marker='.', label=f)
+            plt.plot(results[i, :], marker=".", label=f)
             plt.title(s[i])
         plt.legend()
