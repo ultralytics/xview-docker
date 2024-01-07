@@ -5,6 +5,8 @@
 
 Welcome to the Ultralytics software directory! Our codebase is open-source and 🔓 **distributed under the AGPL-3.0 license**. Explore more about Ultralytics and our cutting-edge projects at [our website](http://www.ultralytics.com).
 
+[![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
+
 # Project Overview :page_facing_up:
 
 This repository, located at https://github.com/ultralytics/xview-docker, is designed to help you dockerize and deploy machine learning models for the xView detection challenge 🔍. It should be used in combination with the trained models from our [xView YOLOv3 repository](https://github.com/ultralytics/xview-yolov3).
