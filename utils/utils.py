@@ -625,11 +625,12 @@ def secondary_class_detection(x, y, w, h, img, model, device):
 
 
 def createChips():
-    import scipy.io
-    import numpy as np
+    from sys import platform
+
     import cv2
     import h5py
-    from sys import platform
+    import numpy as np
+    import scipy.io
 
     mat = scipy.io.loadmat("utils/targets_c60.mat")
     unique_images = np.unique(mat["id"])
@@ -682,8 +683,8 @@ def createChips():
 
 
 def plotResults():
-    import numpy as np
     import matplotlib.pyplot as plt
+    import numpy as np
 
     plt.figure(figsize=(18, 9))
     s = ["x", "y", "w", "h", "conf", "cls", "loss", "prec", "recall"]
