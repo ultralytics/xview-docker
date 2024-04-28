@@ -5,7 +5,7 @@
 
 Welcome to the Ultralytics software directory! Our codebase is open-source and 🔓 **distributed under the AGPL-3.0 license**. Explore more about Ultralytics and our cutting-edge projects at [our website](http://www.ultralytics.com).
 
-[![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
+[![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml) <a href="https://ultralytics.com/discord"><img alt="Discord" src="https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue"></a>
 
 # Project Overview :page_facing_up:
 
