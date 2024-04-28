@@ -9,7 +9,7 @@ import scipy.io
 import torch
 
 # from torch.utils.data import Dataset
-from utils.utils import xyxy2xywh, xview_class_weights
+from utils.utils import xview_class_weights, xyxy2xywh
 
 
 class ImageFolder:  # for eval-only
@@ -460,6 +460,7 @@ def random_affine(
 
 def convert_tif2bmp(p="/Users/glennjocher/Downloads/DATA/xview/val_images_bmp"):
     import glob
+
     import cv2
 
     files = sorted(glob.glob("%s/*.tif" % p))
