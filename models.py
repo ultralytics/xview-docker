@@ -42,7 +42,7 @@ def create_modules(module_defs):
 
         elif module_def["type"] == "route":
             layers = [int(x) for x in module_def["layers"].split(",")]
-            filters = sum([output_filters[layer_i] for layer_i in layers])
+            filters = sum(output_filters[layer_i] for layer_i in layers)
             modules.add_module("route_%d" % i, EmptyLayer())
 
         elif module_def["type"] == "shortcut":
@@ -81,7 +81,7 @@ class YOLOLayer(nn.Module):
     def __init__(self, anchors, nC, img_dim, anchor_idxs):
         super(YOLOLayer, self).__init__()
 
-        anchors = [(a_w, a_h) for a_w, a_h in anchors]  # (pixels)
+        anchors = list(anchors)
         nA = len(anchors)
 
         self.anchors = anchors
@@ -161,7 +161,7 @@ class YOLOLayer(nn.Module):
 
             # Mask outputs to ignore non-existing objects (but keep confidence predictions)
             nM = mask.sum().float()
-            nGT = sum([len(x) for x in targets])
+            nGT = sum(len(x) for x in targets)
             if nM > 0:
                 # wC = weight[torch.argmax(tcls, 1)]  # weight class
                 # wC /= sum(wC)

@@ -13,8 +13,7 @@ np.set_printoptions(linewidth=320, formatter={"float_kind": "{:11.5g}".format}) 
 def load_classes(path):
     """Loads class labels at 'path'."""
     fp = open(path, "r")
-    names = fp.read().split("\n")[:-1]
-    return names
+    return fp.read().split("\n")[:-1]
 
 
 def modelinfo(model):
@@ -241,7 +240,7 @@ def xview_feedback_weights(indices):
 
 
 def plot_one_box(x, im, color=None, label=None, line_thickness=None):
-    tl = line_thickness or round(0.003 * max(im.shape[0:2]))  # line thickness
+    tl = line_thickness or round(0.003 * max(im.shape[:2]))
     color = color or [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(im, c1, c2, color, thickness=tl)
@@ -295,9 +294,7 @@ def compute_ap(recall, precision):
     # where X axis (recall) changes value
     i = np.where(mrec[1:] != mrec[:-1])[0]
 
-    # and sum (\Delta recall) * prec
-    ap = np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])
-    return ap
+    return np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])
 
 
 def bbox_iou(box1, box2, x1y1x2y2=True):
@@ -385,9 +382,9 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
             a, gj, gi, t = a[i], gj[i], gi[i], t[i]
             if len(t.shape) == 1:
                 t = t.view(1, 5)
+        elif iou_anch_best < 0.10:
+            continue
         else:
-            if iou_anch_best < 0.10:
-                continue
             i = 0
 
         tc, gx, gy, gw, gh = t[:, 0].long(), t[:, 1] * nG, t[:, 2] * nG, t[:, 3] * nG, t[:, 4] * nG
@@ -429,15 +426,17 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
     """
 
     output = [None for _ in range(len(prediction))]
-    for image_i, pred in enumerate(prediction):
-        # Filter out confidence scores below threshold
-        # Get score and class with highest confidence
+    # Filter out confidence scores below threshold
+    # Get score and class with highest confidence
 
-        # cross-class NMS ---------------------------------------------
-        thresh = 0.8
+    # cross-class NMS ---------------------------------------------
+    thresh = 0.8
+    radius = 30  # area to search for cross-class ious
+    # Gather bbox priors
+    srl = 3  # sigma rejection level
+    for image_i, pred in enumerate(prediction):
         a = pred.clone()
         a = a[np.argsort(-a[:, 4])]  # sort best to worst
-        radius = 30  # area to search for cross-class ious
         for i in range(len(a)):
             if i >= len(a) - 1:
                 break
@@ -478,8 +477,6 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
             #     if class_prob2[i] > class_prob[i]:
             #         class_pred[i] = class_pred2[i]
 
-        # Gather bbox priors
-        srl = 3  # sigma rejection level
         mu = mat["class_mu"][class_pred].T
         sigma = mat["class_sigma"][class_pred].T * srl
 
@@ -544,33 +541,33 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
                 max_detections if output[image_i] is None else torch.cat((output[image_i], max_detections))
             )
 
-        # # NMS2
-        # for c in unique_labels:
-        #     # Get the detections with the particular class
-        #     detections_class = detections[detections[:, -1] == c]
-        #     # Sort the detections by maximum objectness confidence
-        #     _, conf_sort_index = torch.sort(detections_class[:, 4], descending=True)
-        #     detections_class = detections_class[conf_sort_index]
-        #     # Perform non-maximum suppression
-        #     max_detections = []
-        #
-        #     while detections_class.shape[0]:
-        #         if len(detections_class) == 1:
-        #             break
-        #
-        #         ious = bbox_iou(detections_class[0:1], detections_class[1:])
-        #
-        #         if ious.max() > 0.5:
-        #             max_detections.append(detections_class[0].unsqueeze(0))
-        #
-        #         # Remove detections with IoU >= NMS threshold
-        #         detections_class = detections_class[1:][ious < nms_thres]
-        #
-        #     if len(max_detections) > 0:
-        #         max_detections = torch.cat(max_detections).data
-        #         # Add max detections to outputs
-        #         output[image_i] = max_detections if output[image_i] is None else torch.cat(
-        #             (output[image_i], max_detections))
+            # # NMS2
+            # for c in unique_labels:
+            #     # Get the detections with the particular class
+            #     detections_class = detections[detections[:, -1] == c]
+            #     # Sort the detections by maximum objectness confidence
+            #     _, conf_sort_index = torch.sort(detections_class[:, 4], descending=True)
+            #     detections_class = detections_class[conf_sort_index]
+            #     # Perform non-maximum suppression
+            #     max_detections = []
+            #
+            #     while detections_class.shape[0]:
+            #         if len(detections_class) == 1:
+            #             break
+            #
+            #         ious = bbox_iou(detections_class[0:1], detections_class[1:])
+            #
+            #         if ious.max() > 0.5:
+            #             max_detections.append(detections_class[0].unsqueeze(0))
+            #
+            #         # Remove detections with IoU >= NMS threshold
+            #         detections_class = detections_class[1:][ious < nms_thres]
+            #
+            #     if len(max_detections) > 0:
+            #         max_detections = torch.cat(max_detections).data
+            #         # Add max detections to outputs
+            #         output[image_i] = max_detections if output[image_i] is None else torch.cat(
+            #             (output[image_i], max_detections))
 
     return output
 
@@ -588,10 +585,14 @@ def secondary_class_detection(x, y, w, h, img, model, device):
     y2 = np.minimum(y + l, img.shape[0]).astype(np.uint16)
 
     n = len(x)
-    images = []
-    for i in range(n):
-        images.append(cv2.resize(img[y1[i] : y2[i], x1[i] : x2[i]], (height, height), interpolation=cv2.INTER_LINEAR))
-
+    images = [
+        cv2.resize(
+            img[y1[i] : y2[i], x1[i] : x2[i]],
+            (height, height),
+            interpolation=cv2.INTER_LINEAR,
+        )
+        for i in range(n)
+    ]
     # # plot
     # images_numpy = images.copy()
     # import matplotlib.pyplot as plt
@@ -612,7 +613,7 @@ def secondary_class_detection(x, y, w, h, img, model, device):
 
     with torch.no_grad():
         classes = []
-        nB = int(n / 500) + 1  # number of batches
+        nB = n // 500 + 1
         for i in range(nB):
             # print(i,nB)
             j0 = int(i * 500)
