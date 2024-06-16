@@ -108,7 +108,7 @@ class YOLOLayer(nn.Module):
     # @profile
     def forward(self, p, targets=None, requestPrecision=False, weight=None, epoch=None):
         FT = torch.cuda.FloatTensor if p.is_cuda else torch.FloatTensor
-        device = torch.device("cuda:0" if p.is_cuda else "cpu")
+        torch.device("cuda:0" if p.is_cuda else "cpu")
         # weight = xview_class_weights(range(60)).to(device)
 
         bs = p.shape[0]
