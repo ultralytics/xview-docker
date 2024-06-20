@@ -14,6 +14,9 @@ from utils.utils import xview_class_weights, xyxy2xywh
 
 class ImageFolder:  # for eval-only
     def __init__(self, path, batch_size=1, img_size=416):
+        """Initialize ImageFolder with a path, batch size, and image size, setting up file paths for image data
+        loading.
+        """
         if os.path.isdir(path):
             self.files = sorted(glob.glob(f"{path}/*.*"))
         elif os.path.isfile(path):
@@ -30,10 +33,12 @@ class ImageFolder:  # for eval-only
         self.rgb_std = np.array([29.99, 24.498, 22.046], dtype=np.float32).reshape((3, 1, 1))
 
     def __iter__(self):
+        """Initialize and return the iterable object with a reset count."""
         self.count = -1
         return self
 
     def __next__(self):
+        """Advance to the next item in the iterable sequence, updating the counter and returning the next image path."""
         self.count += 1
         if self.count == self.nB:
             raise StopIteration
@@ -51,11 +56,13 @@ class ImageFolder:  # for eval-only
         return [img_path], img
 
     def __len__(self):
+        """Return the number of batches 'nB'."""
         return self.nB  # number of batches
 
 
 class ListDataset:  # for training
     def __init__(self, path, batch_size=1, img_size=608, targets_path=""):
+        """Initialize ListDataset with image path, batch size, image size, and targets path for training."""
         self.path = path
         self.files = sorted(glob.glob(f"{path}/*.bmp"))
         self.nF = len(self.files)  # number of image files
@@ -88,6 +95,7 @@ class ListDataset:  # for training
         # self.rgb_std = np.array([69.095, 66.369, 64.236], dtype=np.float32).reshape((1, 3, 1, 1))
 
     def __iter__(self):
+        """Initialize shuffle vector and reset count for iterating over dataset."""
         self.count = -1
         # self.shuffled_vector = np.random.permutation(self.nF)  # shuffled vector
         self.shuffled_vector = np.random.choice(
@@ -97,6 +105,9 @@ class ListDataset:  # for training
 
     # @profile
     def __next__(self):
+        """Return the next item in the sequence, incrementing the count and stopping iteration if the count equals
+        nB.
+        """
         self.count += 1
         if self.count == self.nB:
             raise StopIteration
@@ -268,10 +279,12 @@ class ListDataset:  # for training
         return torch.from_numpy(img_all), labels_all
 
     def __len__(self):
+        """Returns the total number of batches (self.nB)."""
         return self.nB  # number of batches
 
 
 def xview_classes2indices(classes):  # remap xview classes 11-94 to 0-61
+    """Remaps xView classes (11-94) to indices (0-61) for the given list of classes."""
     indices = [
         -1,
         -1,
@@ -373,6 +386,7 @@ def xview_classes2indices(classes):  # remap xview classes 11-94 to 0-61
 
 
 def resize_square(img, height=416, color=(0, 0, 0)):  # resizes a rectangular image to a padded square
+    """Resizes a rectangular image to a padded square with a specified height and color."""
     shape = img.shape[:2]  # shape = [height, width]
     ratio = float(height) / max(shape)
     new_shape = [round(shape[0] * ratio), round(shape[1] * ratio)]
@@ -455,6 +469,7 @@ def random_affine(
 
 
 def convert_tif2bmp(p="/Users/glennjocher/Downloads/DATA/xview/val_images_bmp"):
+    """Convert all .tif files to .bmp format in the specified directory path."""
     import glob
 
     import cv2

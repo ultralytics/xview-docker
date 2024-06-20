@@ -17,6 +17,9 @@ def load_classes(path):
 
 
 def modelinfo(model):
+    """Displays model layer details including name, gradient status, number of parameters, shape, mean, and standard
+    deviation.
+    """
     nparams = sum(x.numel() for x in model.parameters())
     ngradients = sum(x.numel() for x in model.parameters() if x.requires_grad)
     print("\n%4s %70s %9s %12s %20s %12s %12s" % ("", "name", "gradient", "parameters", "shape", "mu", "sigma"))
@@ -29,12 +32,14 @@ def modelinfo(model):
 
 
 def xview_class2name(classes):
+    """Converts an xView class index to its corresponding name by reading from 'data/xview.names' file."""
     with open("data/xview.names", "r") as f:
         x = f.readlines()
     return x[classes].replace("\n", "")
 
 
 def xview_indices2classes(indices):  # remap xview classes 11-94 to 0-61
+    """Remaps xView class indices from 11-94 to 0-61."""
     class_list = [
         11,
         12,
@@ -101,6 +106,7 @@ def xview_indices2classes(indices):  # remap xview classes 11-94 to 0-61
 
 
 def xview_class_weights(indices):  # weights of each class in the training set, normalized to mu = 1
+    """Returns normalized class weights for given indices in the xView dataset using torch.FloatTensor."""
     weights = 1 / torch.FloatTensor(
         [
             74,
@@ -170,6 +176,7 @@ def xview_class_weights(indices):  # weights of each class in the training set, 
 
 
 def xview_feedback_weights(indices):
+    """Calculate normalization weights for given xView feedback indices using pre-defined values."""
     weights = 1 / torch.FloatTensor(
         [
             0,
@@ -240,6 +247,7 @@ def xview_feedback_weights(indices):
 
 
 def plot_one_box(x, im, color=None, label=None, line_thickness=None):
+    """Draws a bounding box with optional label on an image using specified coordinates, color, and line thickness."""
     tl = line_thickness or round(0.003 * max(im.shape[:2]))
     color = color or [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
@@ -253,6 +261,7 @@ def plot_one_box(x, im, color=None, label=None, line_thickness=None):
 
 
 def weights_init_normal(m):
+    """Initialize the weights of convolutional and batch normalization layers with a normal distribution."""
     classname = m.__class__.__name__
     if classname.find("Conv") != -1:
         torch.nn.init.normal_(m.weight.data, 0.0, 0.03)
@@ -262,6 +271,7 @@ def weights_init_normal(m):
 
 
 def xyxy2xywh(box):
+    """Convert bounding box format from (x1, y1, x2, y2) to (x_center, y_center, width, height)."""
     xywh = np.zeros(box.shape)
     xywh[:, 0] = (box[:, 0] + box[:, 2]) / 2
     xywh[:, 1] = (box[:, 1] + box[:, 3]) / 2
@@ -574,7 +584,9 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
 
 # @profile
 def secondary_class_detection(x, y, w, h, img, model, device):
-    # 1. create 48-pixel squares from each chip
+    """Detect secondary classes from input image chips using a specified model and device, returning class
+    predictions.
+    """
     img = np.ascontiguousarray(img.transpose([1, 2, 0]))  # torch to cv2
     height = 64
 
@@ -626,6 +638,7 @@ def secondary_class_detection(x, y, w, h, img, model, device):
 
 
 def createChips():
+    """Generates image chips from unique images and saves them with labels into an HDF5 file."""
     from sys import platform
 
     import cv2
@@ -684,6 +697,7 @@ def createChips():
 
 
 def plotResults():
+    """Plot results from multiple text files for various metrics using matplotlib."""
     import matplotlib.pyplot as plt
     import numpy as np
 

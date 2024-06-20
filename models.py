@@ -72,6 +72,7 @@ class EmptyLayer(nn.Module):
     """Placeholder for 'route' and 'shortcut' layers."""
 
     def __init__(self):
+        """Initializes an EmptyLayer module."""
         super(EmptyLayer, self).__init__()
 
 
@@ -79,6 +80,7 @@ class YOLOLayer(nn.Module):
     # YOLO Layer 0
 
     def __init__(self, anchors, nC, img_dim, anchor_idxs):
+        """Initializes a YOLOLayer module with anchors, class count, image dimensions, and anchor indices."""
         super(YOLOLayer, self).__init__()
 
         anchors = list(anchors)
@@ -107,6 +109,9 @@ class YOLOLayer(nn.Module):
 
     # @profile
     def forward(self, p, targets=None, requestPrecision=False, weight=None, epoch=None):
+        """Performs a forward pass in the model with given input tensors, target data, precision flag, weights, and
+        epoch info.
+        """
         FT = torch.cuda.FloatTensor if p.is_cuda else torch.FloatTensor
         torch.device("cuda:0" if p.is_cuda else "cpu")
         # weight = xview_class_weights(range(60)).to(device)
@@ -225,6 +230,7 @@ class Darknet(nn.Module):
     """YOLOv3 object detection model."""
 
     def __init__(self, config_path, img_size=416):
+        """Initialize the YOLOv3 model with configuration path and optional image size (default 416)."""
         super(Darknet, self).__init__()
         self.module_defs = parse_model_config(config_path)
         self.module_defs[0]["height"] = img_size
@@ -233,6 +239,9 @@ class Darknet(nn.Module):
         self.loss_names = ["loss", "x", "y", "w", "h", "conf", "cls", "nGT", "TP", "FP", "FPe", "FN", "TC"]
 
     def forward(self, x, targets=None, requestPrecision=False, weight=None, epoch=None):
+        """Perform a forward pass through the network, optionally computing loss and returning outputs, targets, and
+        other metrics.
+        """
         is_training = targets is not None
         output = []
         self.losses = defaultdict(float)
