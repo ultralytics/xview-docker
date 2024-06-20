@@ -27,6 +27,7 @@ print(opt)
 
 
 def detect(opt):
+    """Perform object detection on images using the specified model and configurations."""
     if opt.plot_flag:
         os.system(f"rm -rf {opt.output_folder}_img")
         os.makedirs(f"{opt.output_folder}_img", exist_ok=True)
@@ -215,6 +216,7 @@ def detect(opt):
 
 class ConvNetb(nn.Module):
     def __init__(self, num_classes=60):
+        """Initializes the ConvNetb class with a specified number of output classes."""
         super(ConvNetb, self).__init__()
         n = 64  # initial convolution size
         self.layer1 = nn.Sequential(
@@ -247,6 +249,7 @@ class ConvNetb(nn.Module):
         self.fully_convolutional = nn.Conv2d(n * 16, 60, kernel_size=4, stride=1, padding=0, bias=True)
 
     def forward(self, x):  # 500 x 1 x 64 x 64
+        """Performs the forward pass by sequentially applying model layers to input tensor x."""
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
