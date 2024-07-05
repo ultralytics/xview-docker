@@ -424,10 +424,7 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
     return tx, ty, tw, th, tconf, tcls, TP, FP, FN, TC
 
 
-# @profile
 def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model2=None, device="cpu"):
-    """Performs Non-Maximum Suppression on predictions to filter out redundant overlapping bounding boxes based on
-    IOU.
     """
     prediction = prediction.cpu()
     """
