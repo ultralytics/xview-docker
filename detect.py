@@ -215,6 +215,8 @@ def detect(opt):
 
 
 class ConvNetb(nn.Module):
+    """A convolutional neural network for image classification with multiple layers and configurable output classes."""
+
     def __init__(self, num_classes=60):
         """Initializes the ConvNetb class with a specified number of output classes."""
         super(ConvNetb, self).__init__()

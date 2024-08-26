@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 import torch.nn as nn
-
 from utils.utils import *
 
 
@@ -77,7 +76,7 @@ class EmptyLayer(nn.Module):
 
 
 class YOLOLayer(nn.Module):
-    # YOLO Layer 0
+    """YOLOLayer implements the YOLO detection layer for handling anchor boxes and class predictions."""
 
     def __init__(self, anchors, nC, img_dim, anchor_idxs):
         """Initializes a YOLOLayer module with anchors, class count, image dimensions, and anchor indices."""

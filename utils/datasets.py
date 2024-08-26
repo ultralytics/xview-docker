@@ -13,6 +13,8 @@ from utils.utils import xview_class_weights, xyxy2xywh
 
 
 class ImageFolder:  # for eval-only
+    """Loads and iterates over images from a specified directory for evaluation purposes."""
+
     def __init__(self, path, batch_size=1, img_size=416):
         """Initialize ImageFolder with a path, batch size, and image size, setting up file paths for image data
         loading.
@@ -61,6 +63,8 @@ class ImageFolder:  # for eval-only
 
 
 class ListDataset:  # for training
+    """Dataset class for loading and augmenting images and labels for training object detection models."""
+
     def __init__(self, path, batch_size=1, img_size=608, targets_path=""):
         """Initialize ListDataset with image path, batch size, image size, and targets path for training."""
         self.path = path
