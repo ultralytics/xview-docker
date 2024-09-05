@@ -12,7 +12,7 @@ np.set_printoptions(linewidth=320, formatter={"float_kind": "{:11.5g}".format}) 
 
 def load_classes(path):
     """Loads class labels at 'path'."""
-    fp = open(path, "r")
+    fp = open(path)
     return fp.read().split("\n")[:-1]
 
 
@@ -28,12 +28,12 @@ def modelinfo(model):
         print(
             "%4g %70s %9s %12g %20s %12g %12g" % (i, name, p.requires_grad, p.numel(), list(p.shape), p.mean(), p.std())
         )
-    print("\n%g layers, %g parameters, %g gradients" % (i + 1, nparams, ngradients))
+    print(f"\n{i + 1:g} layers, {nparams:g} parameters, {ngradients:g} gradients")
 
 
 def xview_class2name(classes):
     """Converts an xView class index to its corresponding name by reading from 'data/xview.names' file."""
-    with open("data/xview.names", "r") as f:
+    with open("data/xview.names") as f:
         x = f.readlines()
     return x[classes].replace("\n", "")
 
@@ -654,9 +654,9 @@ def createChips():
         print(counter)
 
         if platform == "darwin":  # macos
-            img = cv2.imread("/Users/glennjocher/Downloads/DATA/xview/train_images/%g.bmp" % i)
+            img = cv2.imread(f"/Users/glennjocher/Downloads/DATA/xview/train_images/{i:g}.bmp")
         else:  # gcp
-            img = cv2.imread("../train_images/%g.bmp" % i)
+            img = cv2.imread(f"../train_images/{i:g}.bmp")
 
         for j in np.nonzero(mat["id"] == i)[0]:
             c, x1, y1, x2, y2 = mat["targets"][j]
