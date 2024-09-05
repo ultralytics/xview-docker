@@ -73,7 +73,7 @@ class EmptyLayer(nn.Module):
 
     def __init__(self):
         """Initializes an EmptyLayer module."""
-        super(EmptyLayer, self).__init__()
+        super().__init__()
 
 
 class YOLOLayer(nn.Module):
@@ -81,7 +81,7 @@ class YOLOLayer(nn.Module):
 
     def __init__(self, anchors, nC, img_dim, anchor_idxs):
         """Initializes a YOLOLayer module with anchors, class count, image dimensions, and anchor indices."""
-        super(YOLOLayer, self).__init__()
+        super().__init__()
 
         anchors = list(anchors)
         nA = len(anchors)
@@ -231,7 +231,7 @@ class Darknet(nn.Module):
 
     def __init__(self, config_path, img_size=416):
         """Initialize the YOLOv3 model with configuration path and optional image size (default 416)."""
-        super(Darknet, self).__init__()
+        super().__init__()
         self.module_defs = parse_model_config(config_path)
         self.module_defs[0]["height"] = img_size
         self.hyperparams, self.module_list = create_modules(self.module_defs)
@@ -293,7 +293,7 @@ class Darknet(nn.Module):
 
 def parse_model_config(path):
     """Parses the yolo-v3 layer configuration file and returns module definitions."""
-    file = open(path, "r")
+    file = open(path)
     lines = file.read().split("\n")
     lines = [x for x in lines if x and not x.startswith("#")]
     lines = [x.rstrip().lstrip() for x in lines]  # get rid of fringe whitespaces
