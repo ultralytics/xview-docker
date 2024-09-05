@@ -60,7 +60,7 @@ time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './r
 
 Here's a sample output:
 
-![Example Detection](https://github.com/ultralytics/xview-docker/blob/main/output_img/1047.jpg%20%22Example%20Detection%22)
+![Example Detection](https://github.com/ultralytics/xview-docker/blob/main/output_img/1047.jpg)
 
 ## Step 4: Push to Docker Hub
 
