@@ -1,47 +1,49 @@
-<br>
-<a href="https://www.ultralytics.com/" target="_blank"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
+<a href="https://www.ultralytics.com/"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
 
-# Introduction :wave:
+# Introduction 👋
 
-Welcome to the Ultralytics software directory! Our codebase is open-source and 🔓 **distributed under the AGPL-3.0 license**. Explore more about Ultralytics and our cutting-edge projects at [our website](http://www.ultralytics.com).
+Welcome to the Ultralytics software directory! This codebase is open-source and 🔓 **distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license)**. Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
 
-[![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml) <a href="https://discord.com/invite/ultralytics"><img alt="Discord" src="https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue"></a> <a href="https://community.ultralytics.com/"><img alt="Ultralytics Forums" src="https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue"></a> <a href="https://reddit.com/r/ultralytics"><img alt="Ultralytics Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/ultralytics?style=flat&logo=reddit&logoColor=white&label=Reddit&color=blue"></a>
+[![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
+[![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
+[![Ultralytics Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue)](https://community.ultralytics.com/)
+[![Ultralytics Reddit](https://img.shields.io/reddit/subreddit-subscribers/ultralytics?style=flat&logo=reddit&logoColor=white&label=Reddit&color=blue)](https://reddit.com/r/ultralytics)
 
-# Project Overview :page_facing_up:
+# Project Overview 📄
 
-This repository, located at https://github.com/ultralytics/xview-docker, is designed to help you dockerize and deploy machine learning models for the xView detection challenge 🔍. It should be used in combination with the trained models from our [xView YOLOv3 repository](https://github.com/ultralytics/xview-yolov3).
+This repository, hosted at [https://github.com/ultralytics/xview-docker](https://github.com/ultralytics/xview-docker), provides the necessary tools to dockerize and deploy [machine learning](https://www.ultralytics.com/glossary/machine-learning-ml) models specifically for the [xView detection challenge](https://challenge.xviewdataset.org/) 🔍. It is intended to be used alongside the trained models available in our [xView YOLOv3 repository](https://github.com/ultralytics/xview-yolov3).
 
-# Prerequisites :bookmark_tabs:
+# Prerequisites 🔖
 
-To get started, you need Docker and Python 3.6 (or newer). Ensure that you have all the required packages by installing them via pip:
+Before you begin, ensure you have [Docker](https://www.docker.com/) and [Python](https://www.python.org/) 3.6 or newer installed. You'll also need several Python packages. Install them using pip:
 
 ```bash
 pip3 install -U -r requirements.txt
 ```
 
-You should have the following packages:
+Make sure you have the following essential packages installed:
 
-- `numpy` for numerical operations,
-- `scipy` for scientific computations,
-- `torch` as the deep learning framework, and
-- `opencv-python` for computer vision tasks.
+- **numpy**: For efficient numerical operations.
+- **scipy**: Used for various scientific and technical computations.
+- **torch**: The core [deep learning](https://www.ultralytics.com/glossary/deep-learning-dl) framework ([PyTorch](https://pytorch.org/)).
+- **opencv-python**: A library for [computer vision](https://www.ultralytics.com/glossary/computer-vision-cv) tasks.
 
-# Dockerization Steps :whale:
+# Dockerization Steps 🐳
 
-Below are the steps to containerize this repository for the xView challenge using `run.sh`.
+Follow these steps to containerize this repository using the provided `run.sh` script for the xView challenge.
 
-## Step 1: Copy Best Model Checkpoint
+### Step 1: Copy Best Model Checkpoint
 
-Get the best performing checkpoint from our [xView YOLOv3 model](https://github.com/ultralytics/xview-yolov3):
+Retrieve the best performing model checkpoint from the training process conducted in our [xView YOLOv3 repository](https://github.com/ultralytics/xview-yolov3) and place it in the designated checkpoints directory:
 
 ```bash
 mkdir xview-docker/checkpoints
 cp xview-yolov3/checkpoints/best.pt xview-docker/checkpoints
 ```
 
-## Step 2: Build and Tag The Docker Container
+### Step 2: Build and Tag The Docker Container
 
-Here's how to remove older images, set the right permissions for the script, build the image, and tag it appropriately (e.g., `ultralytics/xview:v30`):
+This sequence of commands removes any old [Docker images](https://docs.docker.com/get-started/docker-overview/#images), grants execution permissions to the `run.sh` script, builds the new Docker image, and applies a specific [tag](https://docs.docker.com/reference/cli/docker/image/tag/) (e.g., `ultralytics/xview:v30`):
 
 ```bash
 sudo docker image prune -a
@@ -50,47 +52,44 @@ sudo docker build -t friendlyhello .
 sudo docker tag friendlyhello ultralytics/xview:v30
 ```
 
-## Step 3: Run Container on Example Image
+### Step 3: Run Container on Example Image
 
-Test the container with the example image while specifying CPU and memory usage:
+Test the newly built container using an example image. This command runs the container, specifying CPU and memory limits via the [Docker run command](https://docs.docker.com/engine/containers/run/), executes the `run.sh` script on a sample TIFF image, and displays the output text file:
 
 ```bash
 time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 ```
 
-Here's a sample output:
+Here's a sample output visualization:
 
 ![Example Detection](https://github.com/ultralytics/xview-docker/blob/main/output_img/1047.jpg)
 
-## Step 4: Push to Docker Hub
+### Step 4: Push to Docker Hub
 
-Finally, upload the container to Docker Hub ready for challenge submission:
+After successful testing, upload your container image to [Docker Hub](https://hub.docker.com/), making it ready for submission to the xView challenge:
 
 ```bash
 sudo docker push ultralytics/xview:v30
 ```
 
-You can find the container now hosted at [Docker Hub](https://hub.docker.com/r/ultralytics/xview/), prepared for the challenge 🚀.
+Your container can now be found hosted at [https://hub.docker.com/r/ultralytics/xview/](https://hub.docker.com/r/ultralytics/xview/), prepared for the challenge 🚀.
 
-# 🤝 Contribute
+# Contribute 🤝
 
-We welcome contributions from the community! Whether you're fixing bugs, adding new features, or improving documentation, your input is invaluable. Take a look at our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) to get started. Also, we'd love to hear about your experience with Ultralytics products. Please consider filling out our [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey). A huge 🙏 and thank you to all of our contributors!
+We warmly welcome contributions from the community! Whether it's fixing bugs, adding new features, or enhancing documentation, your input is highly valuable. Please refer to our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) to get started. We're also keen to hear about your experiences with Ultralytics products—please consider filling out our [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey). A huge 🙏 thank you to all our contributors!
 
-<!-- Ultralytics contributors -->
+[![Ultralytics open-source contributors](https://raw.githubusercontent.com/ultralytics/assets/main/im/image-contributors.png)](https://github.com/ultralytics/ultralytics/graphs/contributors)
 
-<a href="https://github.com/ultralytics/yolov5/graphs/contributors">
-<img width="100%" src="https://github.com/ultralytics/assets/raw/main/im/image-contributors.png" alt="Ultralytics open-source contributors"></a>
+# License ©️
 
-# ©️ License
+Ultralytics provides two licensing options to accommodate diverse needs:
 
-Ultralytics is excited to offer two different licensing options to meet your needs:
+- **AGPL-3.0 License**: Ideal for students and enthusiasts, this [OSI-approved](https://opensource.org/license/agpl-v3) open-source license promotes collaboration and knowledge sharing. See the [LICENSE](https://github.com/ultralytics/xview-docker/blob/main/LICENSE) file for details.
+- **Enterprise License**: Designed for commercial applications, this license permits the integration of Ultralytics software and AI models into commercial products without the open-source obligations of AGPL-3.0. For commercial use cases, please contact us via [Ultralytics Licensing](https://www.ultralytics.com/license).
 
-- **AGPL-3.0 License**: Perfect for students and hobbyists, this [OSI-approved](https://opensource.org/license) open-source license encourages collaborative learning and knowledge sharing. Please refer to the [LICENSE](https://github.com/ultralytics/ultralytics/blob/main/LICENSE) file for detailed terms.
-- **Enterprise License**: Ideal for commercial use, this license allows for the integration of Ultralytics software and AI models into commercial products without the open-source requirements of AGPL-3.0. For use cases that involve commercial applications, please contact us via [Ultralytics Licensing](https://www.ultralytics.com/license).
+# Contact Us 📬
 
-# 📬 Contact Us
-
-For bug reports, feature requests, and contributions, head to [GitHub Issues](https://github.com/ultralytics/xview-docker/issues). For questions and discussions about this project and other Ultralytics endeavors, join us on [Discord](https://discord.com/invite/ultralytics)!
+For bug reports, feature requests, and contributions, please visit [GitHub Issues](https://github.com/ultralytics/xview-docker/issues). For broader questions and discussions regarding this project or other Ultralytics initiatives, join our vibrant community on [Discord](https://discord.com/invite/ultralytics)!
 
 <br>
 <div align="center">
