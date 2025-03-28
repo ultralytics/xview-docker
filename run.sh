@@ -1,4 +1,5 @@
 #!/bin/bash
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
 # WARNING: Run 'chmod +x run.sh' BEFORE BUILDING DOCKER CONTAINER
 
