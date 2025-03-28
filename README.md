@@ -2,7 +2,7 @@
 
 # Introduction 👋
 
-Welcome to the Ultralytics software directory! This codebase is open-source and 🔓 **distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license)**. Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
+Welcome to the Ultralytics software directory! This codebase is open-source and distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license). Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
 
 [![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
 [![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
