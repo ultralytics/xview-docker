@@ -23,10 +23,10 @@ pip3 install -U -r requirements.txt
 
 Make sure you have the following essential packages installed:
 
--   **numpy**: For efficient numerical operations.
--   **scipy**: Used for various scientific and technical computations.
--   **torch**: The core [deep learning](https://www.ultralytics.com/glossary/deep-learning-dl) framework ([PyTorch](https://pytorch.org/)).
--   **opencv-python**: A library for [computer vision](https://www.ultralytics.com/glossary/computer-vision-cv) tasks.
+- **numpy**: For efficient numerical operations.
+- **scipy**: Used for various scientific and technical computations.
+- **torch**: The core [deep learning](https://www.ultralytics.com/glossary/deep-learning-dl) framework ([PyTorch](https://pytorch.org/)).
+- **opencv-python**: A library for [computer vision](https://www.ultralytics.com/glossary/computer-vision-cv) tasks.
 
 # Dockerization Steps 🐳
 
@@ -84,8 +84,8 @@ We warmly welcome contributions from the community! Whether it's fixing bugs, ad
 
 Ultralytics provides two licensing options to accommodate diverse needs:
 
--   **AGPL-3.0 License**: Ideal for students and enthusiasts, this [OSI-approved](https://opensource.org/license/agpl-v3) open-source license promotes collaboration and knowledge sharing. See the [LICENSE](https://github.com/ultralytics/xview-docker/blob/main/LICENSE) file for details.
--   **Enterprise License**: Designed for commercial applications, this license permits the integration of Ultralytics software and AI models into commercial products without the open-source obligations of AGPL-3.0. For commercial use cases, please contact us via [Ultralytics Licensing](https://www.ultralytics.com/license).
+- **AGPL-3.0 License**: Ideal for students and enthusiasts, this [OSI-approved](https://opensource.org/license/agpl-v3) open-source license promotes collaboration and knowledge sharing. See the [LICENSE](https://github.com/ultralytics/xview-docker/blob/main/LICENSE) file for details.
+- **Enterprise License**: Designed for commercial applications, this license permits the integration of Ultralytics software and AI models into commercial products without the open-source obligations of AGPL-3.0. For commercial use cases, please contact us via [Ultralytics Licensing](https://www.ultralytics.com/license).
 
 # Contact Us 📬
 
