@@ -2,7 +2,7 @@
 
 # Introduction 👋
 
-Welcome to the Ultralytics software directory! This codebase is open-source and distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license). Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
+Welcome to the Ultralytics xView Docker submission repository! This codebase is open-source and distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license). Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
 
 [![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
 [![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
@@ -27,6 +27,7 @@ Make sure you have the following essential packages installed:
 - **scipy**: Used for various scientific and technical computations.
 - **torch**: The core [deep learning](https://www.ultralytics.com/glossary/deep-learning-dl) framework ([PyTorch](https://pytorch.org/)).
 - **opencv-python**: A library for [computer vision](https://www.ultralytics.com/glossary/computer-vision-cv) tasks.
+- **tqdm**: Provides progress bars used during inference.
 
 # Dockerization Steps 🐳
 
@@ -78,7 +79,7 @@ Your container can now be found hosted at [https://hub.docker.com/r/ultralytics/
 
 We warmly welcome contributions from the community! Whether it's fixing bugs, adding new features, or enhancing documentation, your input is highly valuable. Please refer to our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) to get started. We're also keen to hear about your experiences with Ultralytics products—please consider filling out our [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey). A huge 🙏 thank you to all our contributors!
 
-[![Ultralytics open-source contributors](https://raw.githubusercontent.com/ultralytics/assets/main/im/image-contributors.png)](https://github.com/ultralytics/ultralytics/graphs/contributors)
+[![Ultralytics open-source contributors](https://raw.githubusercontent.com/ultralytics/assets/main/im/image-contributors.png)](https://github.com/ultralytics/xview-docker/graphs/contributors)
 
 # License ©️
 
