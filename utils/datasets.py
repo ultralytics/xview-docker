@@ -18,8 +18,7 @@ class ImageFolder:  # for eval-only
     """Loads and iterates over images from a specified directory for evaluation purposes."""
 
     def __init__(self, path, batch_size=1, img_size=416):
-        """Initialize ImageFolder with a path, batch size, and image size, setting up file paths for image data
-        loading.
+        """Initialize ImageFolder with a path, batch size, and image size, setting up file paths for image data loading.
         """
         if os.path.isdir(path):
             self.files = sorted(glob.glob(f"{path}/*.*"))
@@ -111,8 +110,7 @@ class ListDataset:  # for training
 
     # @profile
     def __next__(self):
-        """Return the next item in the sequence, incrementing the count and stopping iteration if the count equals
-        nB.
+        """Return the next item in the sequence, incrementing the count and stopping iteration if the count equals nB.
         """
         self.count += 1
         if self.count == self.nB:
@@ -201,7 +199,7 @@ class ListDataset:  # for training
             if nL1 > 0:
                 area0 = (labels1[:, 3] - labels1[:, 1]) * (labels1[:, 4] - labels1[:, 2])
 
-            h, w, _ = img1.shape
+            _h, _w, _ = img1.shape
             for j in range(8):
                 labels = np.array([], dtype=np.float32)
 
