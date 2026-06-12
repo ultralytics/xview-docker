@@ -18,9 +18,7 @@ class ImageFolder:  # for eval-only
     """Loads and iterates over images from a specified directory for evaluation purposes."""
 
     def __init__(self, path, batch_size=1, img_size=416):
-        """Initialize ImageFolder with a path, batch size, and image size, setting up file paths for image data
-        loading.
-        """
+        """Initialize image paths, batch size, and image size."""
         if os.path.isdir(path):
             self.files = sorted(glob.glob(f"{path}/*.*"))
         elif os.path.isfile(path):
@@ -105,15 +103,15 @@ class ListDataset:  # for training
         self.count = -1
         # self.shuffled_vector = np.random.permutation(self.nF)  # shuffled vector
         self.shuffled_vector = np.random.choice(
-            self.mat["image_numbers"].ravel(), self.nF, p=self.mat["image_weights"].ravel()
+            self.mat["image_numbers"].ravel(),
+            self.nF,
+            p=self.mat["image_weights"].ravel(),
         )
         return self
 
     # @profile
     def __next__(self):
-        """Return the next item in the sequence, incrementing the count and stopping iteration if the count equals
-        nB.
-        """
+        """Return the next dataset batch or stop iteration."""
         self.count += 1
         if self.count == self.nB:
             raise StopIteration
@@ -166,7 +164,11 @@ class ListDataset:  # for training
             # labels1 = labels1[(labels1[:, 0] != 5) & (labels1[:, 0] != 48)]
 
             img1, labels1, M = random_affine(
-                img0, targets=labels1, degrees=(-20, 20), translate=(0.01, 0.01), scale=(0.70, 1.30)
+                img0,
+                targets=labels1,
+                degrees=(-20, 20),
+                translate=(0.01, 0.01),
+                scale=(0.70, 1.30),
             )  # RGB
 
             nL1 = len(labels1)
@@ -188,7 +190,10 @@ class ListDataset:  # for training
                 for k in range(len(r)):
                     x = (labels1[:, 1] + labels1[:, 3]) / 2
                     y = (labels1[:, 2] + labels1[:, 4]) / 2
-                    c = labels1[(abs(r[k, 0] - x) < height / 2) & (abs(r[k, 1] - y) < height / 2), 0]
+                    c = labels1[
+                        (abs(r[k, 0] - x) < height / 2) & (abs(r[k, 1] - y) < height / 2),
+                        0,
+                    ]
                     if len(c) == 0:
                         weights.append(1e-16)
                     else:
@@ -201,7 +206,6 @@ class ListDataset:  # for training
             if nL1 > 0:
                 area0 = (labels1[:, 3] - labels1[:, 1]) * (labels1[:, 4] - labels1[:, 2])
 
-            h, w, _ = img1.shape
             for j in range(8):
                 labels = np.array([], dtype=np.float32)
 
@@ -405,7 +409,13 @@ def resize_square(img, height=416, color=(0, 0, 0)):  # resizes a rectangular im
 
 
 def random_affine(
-    img, targets=None, degrees=(-10, 10), translate=(0.1, 0.1), scale=(0.9, 1.1), shear=(-3, 3), borderValue=(0, 0, 0)
+    img,
+    targets=None,
+    degrees=(-10, 10),
+    translate=(0.1, 0.1),
+    scale=(0.9, 1.1),
+    shear=(-3, 3),
+    borderValue=(0, 0, 0),
 ):
     """Applies a random affine transformation to an image and updates target labels accordingly."""
     # torchvision.transforms.RandomAffine(degrees=(-10, 10), translate=(.1, .1), scale=(.9, 1.1), shear=(-10, 10))
