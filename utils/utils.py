@@ -283,11 +283,9 @@ def xyxy2xywh(box):
 
 
 def compute_ap(recall, precision):
-    """
-    Compute the average precision, given the recall and precision curves.
+    """Compute the average precision, given the recall and precision curves.
 
-    Code originally from https://github.com/rbgirshick/py-faster-rcnn.
-    # Arguments
+    Code originally from https://github.com/rbgirshick/py-faster-rcnn. # Arguments
         recall:    The recall curve (list).
         precision: The precision curve (list).
     # Returns
@@ -426,8 +424,7 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
 
 
 def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img=None, model2=None, device="cpu"):
-    """
-    Removes detections with lower object confidence score than 'conf_thres' and performs Non-Maximum Suppression to
+    """Removes detections with lower object confidence score than 'conf_thres' and performs Non-Maximum Suppression to
     further filter detections.
 
     Returns detections with shape:
@@ -584,8 +581,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
 
 # @profile
 def secondary_class_detection(x, y, w, h, img, model, device):
-    """Detect secondary classes from input image chips using a specified model and device, returning class
-    predictions.
+    """Detect secondary classes from input image chips using a specified model and device, returning class predictions.
     """
     img = np.ascontiguousarray(img.transpose([1, 2, 0]))  # torch to cv2
     height = 64
