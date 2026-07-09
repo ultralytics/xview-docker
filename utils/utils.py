@@ -581,8 +581,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4, mat=None, img
 
 # @profile
 def secondary_class_detection(x, y, w, h, img, model, device):
-    """Detect secondary classes from input image chips using a specified model and device, returning class predictions.
-    """
+    """Detect secondary classes from input image chips using a specified model and device, returning class predictions."""
     img = np.ascontiguousarray(img.transpose([1, 2, 0]))  # torch to cv2
     height = 64
 
