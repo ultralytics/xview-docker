@@ -39,7 +39,7 @@ Retrieve the best performing model checkpoint from the training process conducte
 
 ```bash
 mkdir xview-docker/checkpoints
-cp xview-yolov3/checkpoints/best.pt xview-docker/checkpoints
+cp xview-yolov3/weights/best.pt xview-docker/checkpoints
 ```
 
 ### Step 2: Build and Tag The Docker Container
@@ -63,7 +63,7 @@ time sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './r
 
 Here's a sample output visualization:
 
-![Example Detection](https://github.com/ultralytics/xview-docker/blob/main/output_img/1047.jpg)
+![Example Detection](https://github.com/ultralytics/xview-docker/blob/main/output_img/1047.jpg?raw=true)
 
 ### Step 4: Push to Docker Hub
 
