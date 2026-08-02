@@ -31,10 +31,10 @@ After opening a PR:
 ## Commands
 
 ```bash
-pip3 install -U -r requirements.txt                       # local install
-mkdir checkpoints && cp ../xview-yolov3/weights/best.pt checkpoints/   # detect.py expects checkpoints/best.pt
-bash run.sh ./1047.tif ./tmp                              # run inference locally on the bundled sample chip
-chmod +x run.sh && sudo docker build -t friendlyhello .   # chmod BEFORE build; the bit is baked into the image
+pip3 install -U -r requirements.txt                                  # local install
+mkdir checkpoints && cp ../xview-yolov3/weights/best.pt checkpoints/ # detect.py expects checkpoints/best.pt
+bash run.sh ./1047.tif ./tmp                                         # run inference locally on the bundled sample chip
+chmod +x run.sh && sudo docker build -t friendlyhello .              # chmod BEFORE build; the bit is baked into the image
 sudo docker tag friendlyhello ultralytics/xview:v30
 sudo docker run -it --memory=8g --cpus=1 ultralytics/xview:v30 bash -c './run.sh /1047.tif /tmp && cat /tmp/1047.tif.txt'
 ```
