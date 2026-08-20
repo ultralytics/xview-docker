@@ -1,12 +1,12 @@
-<a href="https://www.ultralytics.com/"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
+<a href="https://www.ultralytics.com"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
 
 # Introduction 👋
 
-Welcome to the Ultralytics xView Docker submission repository! This codebase is open-source and distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license). Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com/).
+Welcome to the Ultralytics xView Docker submission repository! This codebase is open-source and distributed under the [AGPL-3.0 license](https://www.ultralytics.com/legal/agpl-3-0-software-license). Discover more about Ultralytics and our innovative projects by visiting our official website at [https://www.ultralytics.com](https://www.ultralytics.com).
 
 [![Ultralytics Actions](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/xview-docker/actions/workflows/format.yml)
 [![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
-[![Ultralytics Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue)](https://community.ultralytics.com/)
+[![Ultralytics Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue)](https://community.ultralytics.com)
 [![Ultralytics Reddit](https://img.shields.io/reddit/subreddit-subscribers/ultralytics?style=flat&logo=reddit&logoColor=white&label=Reddit&color=blue)](https://reddit.com/r/ultralytics)
 
 # Project Overview 📄
@@ -77,7 +77,7 @@ Your container can now be found hosted at [https://hub.docker.com/r/ultralytics/
 
 # Contribute 🤝
 
-We warmly welcome contributions from the community! Whether it's fixing bugs, adding new features, or enhancing documentation, your input is highly valuable. Please refer to our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) to get started. We're also keen to hear about your experiences with Ultralytics products—please consider filling out our [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey). A huge 🙏 thank you to all our contributors!
+We warmly welcome contributions from the community! Whether it's fixing bugs, adding new features, or enhancing documentation, your input is highly valuable. Please refer to our [Contributing Guide](https://docs.ultralytics.com/help/contributing) to get started. We're also keen to hear about your experiences with Ultralytics products—please consider filling out our [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey). A huge 🙏 thank you to all our contributors!
 
 [![Ultralytics open-source contributors](https://raw.githubusercontent.com/ultralytics/assets/main/im/image-contributors.png)](https://github.com/ultralytics/xview-docker/graphs/contributors)
 
@@ -85,7 +85,7 @@ We warmly welcome contributions from the community! Whether it's fixing bugs, ad
 
 Ultralytics provides two licensing options to accommodate diverse needs:
 
-- **AGPL-3.0 License**: Ideal for students and enthusiasts, this [OSI-approved](https://opensource.org/license/agpl-v3) open-source license promotes collaboration and knowledge sharing. See the [LICENSE](https://github.com/ultralytics/xview-docker/blob/main/LICENSE) file for details.
+- **AGPL-3.0 License**: Ideal for students and enthusiasts, this [OSI-approved](https://opensource.org/license/agpl-3.0) open-source license promotes collaboration and knowledge sharing. See the [LICENSE](https://github.com/ultralytics/xview-docker/blob/main/LICENSE) file for details.
 - **Enterprise License**: Designed for commercial applications, this license permits the integration of Ultralytics software and AI models into commercial products without the open-source obligations of AGPL-3.0. For commercial use cases, please contact us via [Ultralytics Licensing](https://www.ultralytics.com/license).
 
 # Contact Us 📬
